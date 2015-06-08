@@ -26,7 +26,7 @@ Project is intended to be as simple as practically possible, just clone and go, 
 
 Aim is to have simply documents, users, roles, permissions, routes and bootstrap UI.
 
-There are (more complex boilerplate projects)[https://github.com/matteodem/meteor-boilerplate#other-awesome-boilerplates] around. I'm not interested in typing lots of cli commands just to get started on a boilerplate.
+There are [more complex boilerplate projects](https://github.com/matteodem/meteor-boilerplate#other-awesome-boilerplates) around. I'm not interested in typing lots of cli commands just to get started on a boilerplate.
 
 ## Suggestions
 
