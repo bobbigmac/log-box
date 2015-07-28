@@ -1,13 +1,3 @@
-
-/**
- * Runs on render of home route, sets page title
- */
-Template.home.rendered = function() {
-  $('head title').text(Session.get('brand-name'));
-};
-
-
-
 /**
  * TODO: Remove this stuff
  */
