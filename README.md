@@ -1,12 +1,13 @@
 # Meteor Project Boilerplate
 
-Simple meteor boilerplate for starting any new Meteor web project. Has a simple folder structure for server, client, prep functions and user/model/router config.
+Simple meteor boilerplate for starting any new Meteor web project. Has a simple folder structure for server, client, react components, prep functions and user/model/router config.
 
 ## Contains packages:
 
-* meteor-platform
+* react
+* kadira:flow-router-ssr
+* kadira:react-layout
 * less
-* iron:router
 * accounts-password
 * ian:accounts-ui-bootstrap-3
 * momentjs:moment
@@ -20,9 +21,22 @@ All new signups are assigned role of 'basic'. May also be assigned 'admin' user.
 
 Search codebase for TODO to see any notes to proceed with building a project from this boilerplate.
 
+## Changes
+
+Now using react components instead of blaze templates (though templates can still be added and rendered through react, see `AccountsUIWrapper.jsx`), and now server-side renders, with deferred script loading so some page content is displayed to the user as soon as possible.
+
+Now using flow-router instead of iron-router.
+
 ## Notes
 
-Project is intended to be as simple as practically possible, just clone and go, a good starting point for any new project. 
+Project is intended to be as simple as practically possible, just clone and go, a good starting point for any new project. Clone the project, then remove the origin...
+
+```bash
+git clone https://github.com/bobbigmac/simple-meteor-boilerplate.git your-project-name
+cd your-project-name
+git remote remove origin
+git remote add origin https://gith...
+```
 
 Aim is to have simply documents, users, roles, permissions, routes and bootstrap UI.
 

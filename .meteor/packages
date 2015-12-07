@@ -8,7 +8,6 @@ less
 ian:accounts-ui-bootstrap-3
 twbs:bootstrap
 momentjs:moment
-iron:router
 accounts-password
 ongoworks:security
 alanning:roles
@@ -26,3 +25,6 @@ random
 ejson
 spacebars
 check
+react
+kadira:react-layout
+kadira:flow-router-ssr
