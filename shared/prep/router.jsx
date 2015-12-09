@@ -10,6 +10,22 @@ FlowRouter.notFound = {
 	}
 };
 
+FlowRouter.route('/add', {
+	name: "add-interest",
+	action: function(params, queryParams) {
+		ReactLayout.render(LayoutComponent, { yield: <EditInterestComponent /> });
+	}
+});
+
+FlowRouter.route('/edit/:id', {
+	name: "edit-interest",
+	action: function(params, queryParams) {
+		// var interest = Interests.findOne({ _id: params.id });
+
+		ReactLayout.render(LayoutComponent, { yield: <EditInterestComponent id={params.id} /> });
+	}
+});
+
 FlowRouter.route('/', {
 	name: "home",
 	action: function(params, queryParams) {

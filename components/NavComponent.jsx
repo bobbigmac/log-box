@@ -1,5 +1,15 @@
 NavComponent = React.createClass({
+  mixins: [ReactMeteorData],
+  getMeteorData() {
+    //var handle = Meteor.subscribe("interests", this.props.id);
+
+    return {
+      basicUser: Roles.userIsInRole(Meteor.userId(), ['basic']),
+    };
+  },
 	render() {
+		var addLink = (this.data.basicUser ? <li><a href={FlowHelpers.pathFor('add-interest')}>Add New</a></li> : '');
+
 		return (
 			<nav className="navbar navbar-default navbar-static-top">
 				<div className="container">
@@ -15,9 +25,8 @@ NavComponent = React.createClass({
 					</div>
 
 					<div id="navbar" className="navbar-collapse collapse">
-						<ul className="nav navbar-nav"> {
-							//<a href="#">Some link</a>
-						}
+						<ul className="nav navbar-nav">
+							{addLink}
 						</ul>
 						<AccountsUIWrapper className="nav navbar-nav navbar-right" />
 					</div>

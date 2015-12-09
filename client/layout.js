@@ -1,13 +1,5 @@
 
-// Template.layout.helpers({
-// 	pageTitle: function() {
-// 		var pageTitle = Session.get('page-title');
-// 	  document.title = (pageTitle ? pageTitle + ' - ' : '') + Session.get('brand-name');
-// 	  return '';
-// 	}
-// });
-
-// Template.notFound.rendered = function() {
-// 	//console.warn('Path not found, going home');
-// 	Router.go('/');
-// };
+Meteor.startup(function () {
+	// Use Meteor.startup to render the component after the page is ready
+	//React.render(<App />, document.getElementById("render-target"));
+});
