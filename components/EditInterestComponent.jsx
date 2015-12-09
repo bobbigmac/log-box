@@ -12,7 +12,7 @@ EditInterestComponent = React.createClass({
 	handleSubmit(error, formData) {
 		const interestId = this.props.id;
 		const keys = Object.keys(formData);
-		
+
 		let data = {};
 		let validCount = 0;
 		const validKeys = keys.map(function(key) {
@@ -35,7 +35,7 @@ EditInterestComponent = React.createClass({
 	},
 	render() {
 		if(Meteor.isServer || this.data.loading) {
-			return <div className="loader">Loading...</div>;
+			return <div className="loader"></div>;
 		}
 		
 		let interest = ((this.data && this.data.interest) || {});
