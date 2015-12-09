@@ -30,6 +30,8 @@ ecmascript-runtime@0.2.6
 ejson@1.0.7
 email@1.0.8
 fastclick@1.0.7
+ffxsam:case-converter@0.7.0
+ffxsam:react-smartform@0.9.2
 geojson-utils@1.0.4
 hot-code-push@1.0.0
 html-tools@1.0.5
@@ -48,6 +50,9 @@ localstorage@1.0.5
 logging@1.0.8
 meteor@1.1.10
 meteor-base@1.0.1
+meteorflux:dispatcher@1.2.1
+meteorflux:namespace@1.0.0
+meteorflux:reactive-state@1.2.0
 meteorhacks:fast-render@2.11.0
 meteorhacks:inject-data@1.4.1
 meteorhacks:picker@1.0.3

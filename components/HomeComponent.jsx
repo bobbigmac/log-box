@@ -13,9 +13,9 @@ HomeComponent = React.createClass({
 				<h2 className="title">Hello {this.props.name}!</h2>
 				{this.data.interests.map(function(item, i) {
 					return (
-						<div className="row" key={item._id}>
+						<h3 key={item._id}>
 							<a href={FlowHelpers.pathFor('edit-interest', { id: item._id })}>{item.name}</a>
-						</div>
+						</h3>
 					);
 				}, this)}
 			</div>
