@@ -27,6 +27,7 @@ NavComponent = React.createClass({
 					<div id="navbar" className="navbar-collapse collapse">
 						<ul className="nav navbar-nav">
 							{addLink}
+							<li><a href="https://github.com/bobbigmac/simple-meteor-boilerplate">Github</a></li>
 						</ul>
 						<AccountsUIWrapper className="nav navbar-nav navbar-right" />
 					</div>

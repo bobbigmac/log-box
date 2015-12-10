@@ -2,6 +2,8 @@
 
 Simple meteor boilerplate for starting any new Meteor web project. Has a simple folder structure for server, client, react components, prep functions and user/model/router config.
 
+Demo at http://simpleboilerplate.meteor.com
+
 ## Contains packages:
 
 * react
