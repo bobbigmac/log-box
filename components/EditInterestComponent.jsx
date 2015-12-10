@@ -9,6 +9,11 @@ EditInterestComponent = React.createClass({
 			interest: (id && Interests.findOne(id)) || {},
 		};
 	},
+	fields: {
+		url: { display: 'Homepage', required: true, invalidMsg: "Homepage must be url format.", validateAs: /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,15})([\/\w \.-]*)*\/?$/ },
+		name: { display: 'Name', required: true, requiredMsg: "Name is required." },
+		test: { display: 'Test' },
+	},
 	handleSubmit(error, formData) {
 		const interestId = this.props.id;
 		const keys = Object.keys(formData);
@@ -43,25 +48,17 @@ EditInterestComponent = React.createClass({
 		let formId = "interestForm";
 
 		return (
-			<SmartForm.Form id={formId} onSubmit={this.handleSubmit}>
+			<SmartForm.Form id={formId} role="form" onSubmit={this.handleSubmit}>
 				
-				<EditFieldComponent
-					id="name" 
-					display="Name" 
-					formId={formId} 
-					required 
-					defaultValue={interest.name} 
-				/>
-				
-				<EditFieldComponent
-					id="url" 
-					display="Homepage" 
-					formId={formId} 
-					required 
-					validateAs={/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,15})([\/\w \.-]*)*\/?$/}
-					invalidMsg="Homepage must be url format."
-					defaultValue={interest.url} 
-				/>
+				{Object.keys(this.fields).map(function(id) {
+					return (<EditFieldComponent
+						id={id}
+						key={id}
+						formId={formId} 
+						defaultValue={interest[id]}
+						{...this.fields[id]} 
+					/>)
+				}.bind(this))}
 
 				<input className="btn btn-default" type="submit" value={editName} />
 			</SmartForm.Form>
