@@ -11,6 +11,7 @@ HomeComponent = React.createClass({
 		return (
 			<div>
 				<h2 className="title">Hello {this.props.name}!</h2>
+
 				{this.data.interests.map(function(item, i) {
 					return (
 						<h3 key={item._id}>
@@ -18,6 +19,8 @@ HomeComponent = React.createClass({
 						</h3>
 					);
 				}, this)}
+
+	      <DocumentTitle title={'Hello '+this.props.name+' - '+BrandName} />
 			</div>
 		);
   }

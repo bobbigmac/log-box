@@ -1,5 +1,5 @@
 LayoutComponent = React.createClass({
-	brand: 'Simple Boilerplate',
+	brand: BrandName,
   render() {
 		return (
 			<div>
