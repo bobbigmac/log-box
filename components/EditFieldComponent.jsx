@@ -13,25 +13,33 @@ EditFieldComponent = React.createClass({
 		}
 	},
 	formGroupClass() {
-		return 'form-group' + (this.state && this.state.error ? ' has-error' : '');
+		return 'form-group' + 
+			(this.props && this.props.col ? ' '+this.props.col : '') + 
+			(this.state && this.state.error ? ' has-error' : '');
 	},
 	render() {
+		var fieldElement = false;
+
+		switch(this.props.type) {
+			case 'tags': 
+				fieldElement = (<TagsInput {...this.props} />);
+				break;
+			case 'textarea':
+				//TODO: Implement on SmartForm
+			case 'text':
+			default: 
+				fieldElement = (<TextInput
+					placeholder={this.props.display}
+					solveDirty={TextInput.remotePriority}
+					{...this.props}
+				/>);
+				break;
+		}
+
 		return (
 			<div className={this.formGroupClass(this.props.name||this.props.id)}>
 				<label htmlFor={this.props.id}>{this.props.display}</label>
-				<SmartForm.Input
-					ref="control"
-					className="form-control"
-					placeholder={this.props.display}
-					{...this.props}
-				/>
-				<SmartForm.Error
-					linkedTo={this.props.formId+'.'+this.props.id}
-					requiredMsg={this.props.display+' is required.'}
-					invalidMsg={this.props.invalidMsg}
-					onValidate={this.onValidate}
-					className="help-block"
-				/>
+				{fieldElement}
 			</div>
 		);
 	}

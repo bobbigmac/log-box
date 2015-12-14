@@ -20,5 +20,9 @@ Interests.permit('update')
 	.apply();
 
 Interests.permit('remove')
+	.ownerIsLoggedInUser()
+	.apply();
+	
+Interests.permit('remove')
 	.ifHasRole('admin')
 	.apply();
