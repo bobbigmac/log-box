@@ -22,15 +22,15 @@ EditFieldComponent = React.createClass({
 
 		switch(this.props.type) {
 			case 'tags': 
-				fieldElement = (<TagsInput {...this.props} />);
+				fieldElement = (<SimpleForm.TagsInput {...this.props} />);
 				break;
 			case 'textarea':
-				//TODO: Implement on SmartForm
 			case 'text':
 			default: 
-				fieldElement = (<TextInput
+				fieldElement = (<SimpleForm.TextInput
 					placeholder={this.props.display}
-					solveDirty={TextInput.remotePriority}
+					solveDirty={SimpleForm.remotePriority}
+					className="form-control"
 					{...this.props}
 				/>);
 				break;

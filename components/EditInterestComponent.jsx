@@ -16,8 +16,8 @@ EditInterestComponent = React.createClass({
 	fields: {
 		url: { display: 'Homepage', col: 'col-sm-6 col-xs-12', required: true, invalidMsg: "Homepage must be url format.", validateAs: /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,15})([\/\w \.-]*)*\/?[^\s]*$/ },
 		title: { display: 'Title', col: 'col-sm-6 col-xs-12' }, //required: true, requiredMsg: "Title is required." },
-		text: { display: 'Description', type: "textarea", col: 'col-sm-12', multiline: 3 }, //TODO: Need to implement multiline on the component
-		tags: { display: 'Tags', type: "tags", col: 'col-sm-12' }, //, 'data-role': 'tagsinput' },
+		text: { display: 'Description', type: "textarea", col: 'col-sm-12 col-xs-12', multiline: 3 }, //TODO: Need to implement multiline on the component
+		tags: { display: 'Tags', type: "tags", col: 'col-sm-12 col-xs-12' }, //, 'data-role': 'tagsinput' },
 	},
 	componentWillReceiveProps() {
 		this.replaceState({});
@@ -123,7 +123,7 @@ EditInterestComponent = React.createClass({
 					/>);
 				}.bind(this))}
 
-				<div className="col-sm-12">
+				<div className="form-group col-sm-12 col-xs-12">
 					<input className="btn btn-default pull-right" type="submit" value={editName+' Listing'} />
 					{deleteButton}
 				</div>
