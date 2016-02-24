@@ -15,7 +15,7 @@ SummaryChart = React.createClass({
   },
   componentWillUpdate(nextProps) {
   	//TODO: Diff, or setup client-side observer and just watch added
-  	console.log('will update', this.data);
+  	//console.log('will update', this.data);
   	if(this.data && this.data.periods) {
   		const graph = this.graph;
   		const periods = this.data.periods;
@@ -40,7 +40,7 @@ SummaryChart = React.createClass({
 						cache[cacheKey].count = data.count;
 						//TODO: Clear out magic numbers, do this right
 						graphData = graph.series[1].data;
-						console.log('graph.series', graph.series, graphData[graphData.length-1]);
+						//console.log('graph.series', graph.series, graphData[graphData.length-1]);
 						graphData[graphData.length-1].y = data.count;
 					}
 				}

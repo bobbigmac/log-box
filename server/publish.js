@@ -15,9 +15,10 @@ Meteor.publish('events', function(options) {
 	options = (options && options instanceof Object && options) || {};
 
 	if(this.userId) {
-		var filter = (options.filter && options.filter instanceof Object && options.filter) || {};
-		var fields = (options.fields && options.fields instanceof Object && options.fields) || false;
-		var sort = (options.sort && options.sort instanceof Object && options.sort) || false;
+		var filter = (options.filter instanceof Object && options.filter) || {};
+		var fields = (options.fields instanceof Object && options.fields) || false;
+		var sort = (options.sort instanceof Object && options.sort) || false;
+		var limit = (options.limit instanceof Number && options.limit) || 50;
 		
 		var queryOptions = {};
 		if(fields) {
@@ -25,6 +26,9 @@ Meteor.publish('events', function(options) {
 		}
 		if(sort) {
 			queryOptions.sort = sort;
+		}
+		if(limit) {
+			queryOptions.limit = limit;
 		}
 
 		filter.owner = this.userId;
