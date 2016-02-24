@@ -6,4 +6,13 @@ Meteor.startup(function () {
 });
 
 Meteor.methods({
+	'add-test': function() {
+		Events.insert({
+			owner: this.userId,
+			type: 'test',
+			title: 'test '+Random.id(),
+			created: new Date(),
+			modified: new Date(),
+		});
+	}
 });

@@ -1,9 +1,8 @@
-
 HomeComponent = React.createClass({
   mixins: [ReactMeteorData],
   getMeteorData() {
     Meteor.subscribe("apikey");
-    Meteor.subscribe("eventsGroups");
+    //Meteor.subscribe("eventsGroups");
     var handle = Meteor.subscribe("events");
 
     return {
@@ -20,6 +19,8 @@ HomeComponent = React.createClass({
 				<h3 className="title">
 					{(this.data.events && this.data.events.length||0)+' Events'}
 				</h3>
+
+				{Meteor.isClient && <SummaryChart />}
 
 				{this.data.events.map(function(item, i) {
 					//console.log(item);
