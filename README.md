@@ -6,6 +6,8 @@ Realtime listener/display for remote logging events.
 
 http://logbox.meteor.com
 
+`http://logbox.meteor.com/add/?owner=YOUR_API_KEY&title=My%20awesome%20message%20on%20logbox`
+
 ## Usage
 
 * Run `meteor`.
