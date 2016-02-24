@@ -1,7 +1,9 @@
+
 HomeComponent = React.createClass({
   mixins: [ReactMeteorData],
   getMeteorData() {
     Meteor.subscribe("apikey");
+    Meteor.subscribe("eventsGroups");
     var handle = Meteor.subscribe("events");
 
     return {

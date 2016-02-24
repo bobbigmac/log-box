@@ -29,3 +29,5 @@ react
 kadira:react-layout
 kadira:flow-router-ssr
 bobbigmac:react-simpleform
+jcbernack:reactive-aggregate
+lai:ddp-inspector
