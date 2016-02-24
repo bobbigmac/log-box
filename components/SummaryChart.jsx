@@ -1,3 +1,7 @@
+var graph = false;
+var xAxis = false;
+var cache = {};
+
 SummaryChart = React.createClass({
   mixins: [ReactMeteorData],
   getMeteorData() {
@@ -17,10 +21,10 @@ SummaryChart = React.createClass({
   	//TODO: Diff, or setup client-side observer and just watch added
   	//console.log('will update', this.data);
   	if(this.data && this.data.periods) {
-  		const graph = this.graph;
-  		const periods = this.data.periods;
+  		//graph = this.graph;
+  		var periods = this.data.periods;
   		//console.log(graph);
-  		let cache = this.cache;
+  		//let cache = this.cache;
 
   		periods.forEach(function(data, pos) {
   			let date = data.date;
@@ -39,14 +43,16 @@ SummaryChart = React.createClass({
 					} else {
 						cache[cacheKey].count = data.count;
 						//TODO: Clear out magic numbers, do this right
-						graphData = graph.series[1].data;
-						//console.log('graph.series', graph.series, graphData[graphData.length-1]);
-						graphData[graphData.length-1].y = data.count;
+						if(graph.series && graph.series[1]) {
+							graphData = graph.series[1].data;
+							//console.log('graph.series', graph.series, graphData[graphData.length-1]);
+							graphData[graphData.length-1].y = data.count;
+						}
 					}
 				}
   		});
 			
-			this.xAxis.render();
+			xAxis.render();
 			graph.render();
   	}
   },
@@ -54,29 +60,27 @@ SummaryChart = React.createClass({
   	// console.log('did mount', this.data, this.refs['chart-container']);
 		var time = new Rickshaw.Fixtures.Time();
 
-  	this.cache = {};
+  	cache = {};
   	// See http://code.shutterstock.com/rickshaw/
-		let graph = this.graph = new Rickshaw.Graph({
+		graph = new Rickshaw.Graph({
 			element: this.refs['chart-container'],
 			width: 900,
 			height: 300,
 			renderer: 'line',
 			interpolation: 'linear',
-			/*series: new Rickshaw.Series.FixedDuration([{ name: 'date' }], undefined, {
-				timeInterval: 60 * 60 * 1000,
-				maxDataPoints: 24,
-				timeBase: (2 * 24 * 60 * 60)
-			})*/
 			series: new Rickshaw.Series.FixedDuration([{ name: 'date' }], [], {
 				timeInterval: 60,
-				maxDataPoints: 20
+				maxDataPoints: 20,
+				//timeBase: (2 * 24 * 60 * 60)
 			})
 		});
+		//var graph = this.graph;
 
-		var xAxis = this.xAxis = new Rickshaw.Graph.Axis.Time({
+		xAxis = new Rickshaw.Graph.Axis.Time({
 	    graph: graph,
 	    timeUnit: time.unit('hour'),
 		});
+		//xAxis = this.xAxis;
 
 		Meteor.setInterval(function() {
 			graph.render();
