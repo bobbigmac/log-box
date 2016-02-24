@@ -1,26 +1,35 @@
 HomeComponent = React.createClass({
   mixins: [ReactMeteorData],
   getMeteorData() {
-    var handle = Meteor.subscribe("interests");
+    Meteor.subscribe("apikey");
+    var handle = Meteor.subscribe("events");
 
     return {
-      interests: Interests.find().fetch()
+    	user: Meteor.user(),
+      events: Events.find({}, { sort: { created: -1 }}).fetch()
     };
   },
   render() {
 		return (
 			<section>
-				<h3 className="title">{(this.data.interests && this.data.interests.length||0)+' Listings'}</h3>
+				{((!this.data.user) && <RegisterWarning show={!this.data.user} message="You must register to register log events and view realtime messages" />)}
+				{((this.data.user) && <div className="alert alert-info" role="alert">GET, PUT or POST events to /add with any fields, including {"{"} owner: {this.data.user.apikey} {"}"}</div> )}
 
-				{this.data.interests.map(function(item, i) {
+				<h3 className="title">
+					{(this.data.events && this.data.events.length||0)+' Events'}
+				</h3>
+
+				{this.data.events.map(function(item, i) {
+					//console.log(item);
 					return (
 						<h3 key={item._id}>
-							<a href={FlowHelpers.pathFor('edit-interest', { id: item._id })}>{item.title}</a>
+							{(item.created && <span className="pull-right">{new moment(new Date(item.created)).fromNow()}</span>)}
+							<a href={FlowHelpers.pathFor('edit-event', { id: item._id })}>{item.title}</a>
 						</h3>
 					);
 				}, this)}
 
-	      <DocumentTitle title={(this.data.interests && this.data.interests.length||0)+' Listings - '+BrandName} />
+	      <DocumentTitle title={(this.data.events && this.data.events.length||0)+' Events - '+BrandName} />
 			</section>
 		);
   }

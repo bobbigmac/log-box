@@ -8,8 +8,6 @@ NavComponent = React.createClass({
     };
   },
 	render() {
-		var addLink = (this.data.basicUser ? <li><a href={FlowHelpers.pathFor('add-interest')}>Add New</a></li> : '');
-
 		return (
 			<nav className="navbar navbar-default navbar-static-top">
 				<div className="container">
@@ -24,8 +22,7 @@ NavComponent = React.createClass({
 
 					<div id="navbar" className="navbar-collapse collapse">
 						<ul className="nav navbar-nav">
-							{addLink}
-							<li><a href="https://github.com/bobbigmac/simple-meteor-boilerplate">Github</a></li>
+							<li><a href="https://github.com/bobbigmac/log-box">Github</a></li>
 						</ul>
 						<AccountsUIWrapper className="nav navbar-nav navbar-right" />
 					</div>

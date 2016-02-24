@@ -10,7 +10,7 @@ FlowRouter.notFound = {
 	}
 };
 
-FlowRouter.route('/add', {
+/*FlowRouter.route('/add', {
 	name: "add-interest",
 	action: function(params, queryParams) {
 		ReactLayout.render(LayoutComponent, { yield: <EditInterestComponent /> });
@@ -24,7 +24,17 @@ FlowRouter.route('/edit/:id', {
 
 		ReactLayout.render(LayoutComponent, { yield: <EditInterestComponent id={params.id} /> });
 	}
-});
+});*/
+
+/*if(Meteor.isServer) {
+	FlowRouter.route('/add', {
+		name: 'add',
+		action: function(params, queryParams, res, req) {
+			console.log(params, queryParams, res, req)
+			return 'hello';
+		}
+	});
+}*/
 
 FlowRouter.route('/', {
 	name: "home",

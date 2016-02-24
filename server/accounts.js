@@ -11,6 +11,7 @@ Meteor.startup(function() {
 
 Accounts.onCreateUser(function(options, user) {
   user.roles = ['basic'];
+  user.apikey = Random.id().toLowerCase();
 
 	if(options.profile) {
 		user.profile = options.profile;

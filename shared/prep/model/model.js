@@ -1,4 +1,3 @@
-BrandName = 'Simple Boilerplate';
+BrandName = 'Log Box';
 
-Interests = new Mongo.Collection('interests');
-// Profiles = new Mongo.Collection('profiles');
+Events = new Mongo.Collection('events');

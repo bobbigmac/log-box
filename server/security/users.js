@@ -16,10 +16,12 @@ Security.permit('update')
 	.collections([Meteor.users])
 	.onlyProps(['profile'])
 	.idIsLoggedInUser()
+	.updateModified()
 	.apply();
 
 // Allow admin to update any user
 Security.permit('update')
 	.collections([Meteor.users])
 	.ifHasRole('admin')
+	.updateModified()
 	.apply();

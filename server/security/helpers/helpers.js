@@ -1,5 +1,13 @@
 //SEE https://github.com/ongoworks/meteor-security
 
+Security.defineMethod("ifOwnerExists", {
+  fetch: [],
+  deny: function (type, arg, userId, doc) {
+    return !(typeof doc.owner && typeof doc.owner == 'string' && 
+      Meteor.users.findOne(doc.owner, { fields: { _id: 1 }}));
+  }
+});
+
 Security.defineMethod("ownerIsLoggedInUser", {
   fetch: [],
   deny: function (type, arg, userId, doc) {
@@ -19,10 +27,17 @@ Security.defineMethod("setOwnerUser", {
   fetch: [],
   deny: function (type, arg, userId, doc) {
     doc.owner = userId;
+    return false;
+  }
+});
+
+Security.defineMethod("updateModified", {
+  fetch: [],
+  deny: function (type, arg, userId, doc) {
     if(!doc.created) {
-	    doc.created = new Date();
-  	}
-  	doc.modified = new Date();
+      doc.created = new Date();
+    }
+    doc.modified = new Date();
     return false;
   }
 });
