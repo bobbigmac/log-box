@@ -2,6 +2,10 @@
 
 Realtime listener/display for remote logging events.
 
+## Demo
+
+http://logbox.meteor.com
+
 ## Usage
 
 * Run `meteor`.
