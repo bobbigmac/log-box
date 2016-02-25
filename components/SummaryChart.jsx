@@ -1,118 +1,77 @@
-var graph = false;
-var xAxis = false;
-var cache = {};
-
-var makeDate = function(date) {
-	return new Date(date.year || 2010, date.month || 1, date.day || 1, date.hour || 0, date.minute || 0, date.second || 0);
-}
-var addDays = function(date, days) {
-    var result = new Date(date);
-    result.setDate(result.getDate() + days);
-    return result;
-}
-var addHours = function(date, hours) {
-    var result = new Date(date);
-    result.setTime(result.getTime() + (hours*60*60*1000));
-    return result;
+const makeDate = function(date) {
+	return ((date && new Date(date.year || 2010, date.month || 1, date.day || 1, date.hour || 0, date.minute || 0, date.second || 0)) || new Date());
 }
 
 SummaryChart = React.createClass({
-  mixins: [ReactMeteorData],
-  getMeteorData() {
-  	if(Meteor.isClient) {
-	    var handle = Meteor.subscribe("eventsGroups");
+	mixins: [ReactMeteorData],
+	getMeteorData() {
+		if(Meteor.isClient) {
+			var handle = Meteor.subscribe("eventsGroups");
 
-	    return {
-	    	loading: !handle.ready(),
-	    	user: Meteor.user(),
-	      periods: EventsGroups.find().fetch()
-	    };
-	  } else {
-	  	return {};
-	  }
-  },
-  componentWillUpdate(nextProps) {
-  	//console.log('will update', this.data);
-  	if(this.data && this.data.periods) {
-  		var periods = this.data.periods;
+			return {
+				loading: !handle.ready(),
+				user: Meteor.user(),
+				periods: EventsGroups.find().fetch()
+			};
+		} else {
+			return {};
+		}
+	},
+	componentWillUpdate(nextProps) {
+		if(this.data && this.data.periods) {
+			const both = this.data.periods.reduce(function(both, p) {
 
-  		if(periods && periods.length) {
-	  		// var startDate = periods[0].date;
-	  		// var endDate = periods[periods.length - 1].date;
+				both[0].push(makeDate(p.date));
+				both[1].push(p.count);
 
-	  		periods.forEach(function(data, pos) {
-	  			let date = data.date;
-	  			if(date) {
-	  				date = makeDate(date);
-						const cacheKey = 'x'+date.getTime();
+				//TODO: Adapt this if wanting to interpolate ticks
+				// if(periods[pos+1] && periods[pos+1].date) {
+				// 	var nextDate = makeDate(periods[pos+1].date);
+				// 	var hoursDiff = (Math.abs(nextDate - date) / 36e5) - 1;//(60*60*1000);
+				// 	//var plusOneDay = addDays(date, 1);
 
-	  				if(!cache[cacheKey]) {
-	  					cache[cacheKey] = {
-								date: date,
-								count: data.count
-							};
-							graph.series.addData(cache[cacheKey]);
+				// 	console.log(date, nextDate, hoursDiff);
+				// 	for(var i = 0; i < hoursDiff; i++) {
+				// 		graph.series.addData({ date: addHours(date, i+1), count: 0 });
+				// 	}
+				// }
+				return both;
+			}, [['x'], ['count']]);
 
-							if(periods[pos+1] && periods[pos+1].date) {
-								var nextDate = makeDate(periods[pos+1].date);
-								var hoursDiff = (Math.abs(nextDate - date) / 36e5) - 1;//(60*60*1000);
-								//var plusOneDay = addDays(date, 1);
-
-								console.log(date, nextDate, hoursDiff);
-								for(var i = 0; i < hoursDiff; i++) {
-									graph.series.addData({ date: addHours(date, i+1), count: 0 });
-								}
-							}
-						} else {
-							cache[cacheKey].count = data.count;
-							//TODO: Clear out magic numbers, do this right
-							if(graph.series && graph.series[1]) {
-								graphData = graph.series[1].data;
-								//console.log('graph.series', graph.series, graphData[graphData.length-1]);
-								graphData[graphData.length-1].y = data.count;
-							}
-						}
+			chart.load({
+				columns: both
+			});
+		}
+	},
+	componentDidMount() {
+		chart = c3.generate({
+			bindto: this.refs['chart-container'],
+			data: {
+				x: 'x',
+				//xFormat: '%Y-%m-%d %H:%M:%S',
+				columns: [
+					['x'],
+					['count']
+				]
+			},
+			axis: {
+				x: {
+					type: 'timeseries',
+					tick: {
+						format: '%d/%H',
+            // format: function (x) {
+            //   if(x.getHours() === 0) {
+            //     return x;
+            //   }
+            // },
+						rotate: 40,
 					}
-	  		});
-				
-				console.log(graph.series)
-				graph.render();
-				xAxis.render();
+				}
 			}
-  	}
-  },
-  componentDidMount() {
-  	// console.log('did mount', this.data, this.refs['chart-container']);
-		var time = new Rickshaw.Fixtures.Time();
-
-  	cache = {};
-  	// See http://code.shutterstock.com/rickshaw/
-		graph = new Rickshaw.Graph({
-			element: this.refs['chart-container'],
-			width: 900,
-			height: 300,
-			renderer: 'line',
-			interpolation: 'linear',
-			series: new Rickshaw.Series.FixedDuration([{ name: 'date' }], [], {
-				timeInterval: 60*60*1000,
-				maxDataPoints: 96,
-				//timeBase: (2 * 24 * 60 * 60 * 1000)
-			})
 		});
-		//var graph = this.graph;
 
-		xAxis = new Rickshaw.Graph.Axis.Time({
-	    graph: graph,
-	    timeUnit: time.unit('day'),
-		});
-		//xAxis = this.xAxis;
-
-		Meteor.setInterval(function() {
-			graph.render();
-			xAxis.render();
-		}, 10 * 1000);
-  },
-  render() {
+	},
+	render() {
 		return (
 			<section>
 				<div ref="chart-container">
@@ -134,5 +93,5 @@ SummaryChart = React.createClass({
 				</div>
 			</section>
 		);
-  }
+	}
 });
