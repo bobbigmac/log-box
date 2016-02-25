@@ -2,6 +2,20 @@ var graph = false;
 var xAxis = false;
 var cache = {};
 
+var makeDate = function(date) {
+	return new Date(date.year || 2010, date.month || 1, date.day || 1, date.hour || 0, date.minute || 0, date.second || 0);
+}
+var addDays = function(date, days) {
+    var result = new Date(date);
+    result.setDate(result.getDate() + days);
+    return result;
+}
+var addHours = function(date, hours) {
+    var result = new Date(date);
+    result.setTime(result.getTime() + (hours*60*60*1000));
+    return result;
+}
+
 SummaryChart = React.createClass({
   mixins: [ReactMeteorData],
   getMeteorData() {
@@ -18,42 +32,53 @@ SummaryChart = React.createClass({
 	  }
   },
   componentWillUpdate(nextProps) {
-  	//TODO: Diff, or setup client-side observer and just watch added
   	//console.log('will update', this.data);
   	if(this.data && this.data.periods) {
-  		//graph = this.graph;
   		var periods = this.data.periods;
-  		//console.log(graph);
-  		//let cache = this.cache;
 
-  		periods.forEach(function(data, pos) {
-  			let date = data.date;
-  			if(date) {
-  				date = new Date(date.year || 2010, date.month || 1, date.day || 1, date.hour || 0, date.minute || 0, 0);
-					const cacheKey = 'x'+date.getTime();
-  				//console.log(date, graph.series);
-					
-					//TODO: Currently doesn't update the latest entry if data has changed
-  				if(!cache[cacheKey]) {
-  					cache[cacheKey] = {
-							date: date,
-							count: data.count
-						};
-						graph.series.addData(cache[cacheKey]);
-					} else {
-						cache[cacheKey].count = data.count;
-						//TODO: Clear out magic numbers, do this right
-						if(graph.series && graph.series[1]) {
-							graphData = graph.series[1].data;
-							//console.log('graph.series', graph.series, graphData[graphData.length-1]);
-							graphData[graphData.length-1].y = data.count;
+  		if(periods && periods.length) {
+	  		// var startDate = periods[0].date;
+	  		// var endDate = periods[periods.length - 1].date;
+
+	  		periods.forEach(function(data, pos) {
+	  			let date = data.date;
+	  			if(date) {
+	  				date = makeDate(date);
+						const cacheKey = 'x'+date.getTime();
+
+	  				if(!cache[cacheKey]) {
+	  					cache[cacheKey] = {
+								date: date,
+								count: data.count
+							};
+							graph.series.addData(cache[cacheKey]);
+
+							if(periods[pos+1] && periods[pos+1].date) {
+								var nextDate = makeDate(periods[pos+1].date);
+								var hoursDiff = (Math.abs(nextDate - date) / 36e5) - 1;//(60*60*1000);
+								//var plusOneDay = addDays(date, 1);
+
+								console.log(date, nextDate, hoursDiff);
+								for(var i = 0; i < hoursDiff; i++) {
+									graph.series.addData({ date: addHours(date, i+1), count: 0 });
+								}
+							}
+						} else {
+							cache[cacheKey].count = data.count;
+							//TODO: Clear out magic numbers, do this right
+							if(graph.series && graph.series[1]) {
+								graphData = graph.series[1].data;
+								//console.log('graph.series', graph.series, graphData[graphData.length-1]);
+								graphData[graphData.length-1].y = data.count;
+							}
 						}
 					}
-				}
-  		});
-			
-			xAxis.render();
-			graph.render();
+	  		});
+				
+				console.log(graph.series)
+				graph.render();
+				xAxis.render();
+			}
   	}
   },
   componentDidMount() {
@@ -69,16 +94,16 @@ SummaryChart = React.createClass({
 			renderer: 'line',
 			interpolation: 'linear',
 			series: new Rickshaw.Series.FixedDuration([{ name: 'date' }], [], {
-				timeInterval: 60,
-				maxDataPoints: 20,
-				//timeBase: (2 * 24 * 60 * 60)
+				timeInterval: 60*60*1000,
+				maxDataPoints: 96,
+				//timeBase: (2 * 24 * 60 * 60 * 1000)
 			})
 		});
 		//var graph = this.graph;
 
 		xAxis = new Rickshaw.Graph.Axis.Time({
 	    graph: graph,
-	    timeUnit: time.unit('hour'),
+	    timeUnit: time.unit('day'),
 		});
 		//xAxis = this.xAxis;
 
