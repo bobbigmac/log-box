@@ -2,7 +2,8 @@
 if (Meteor.isServer) {
 	Meteor.startup(function () {
 		WebApp.connectHandlers.use(function(req, res, next) {
-			var urlParts = req.url && req.url.split('/');
+			var urlParts = req.url && req.url.split(/[\/?]/);
+			
 			if(urlParts.length > 1 && urlParts[1] === 'add') {
 				var content = false, code = 0;
 				try {
