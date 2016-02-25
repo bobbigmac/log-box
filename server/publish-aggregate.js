@@ -6,10 +6,6 @@ Meteor.publish("eventsGroups", function(filter) {
 			"owner": this.userId
 		}
 	}, {
-		$sort: {
-			created: -1
-		}
-	}, {
 		$group: {
 			'_id': {
         "year": { "$year": "$created" },
@@ -18,14 +14,20 @@ Meteor.publish("eventsGroups", function(filter) {
         "hour": { "$hour": "$created" },
         //"minute": { "$minute": "$created" }
       },
+      'created': { "$first": "$created" },
 			'count': { $sum: 1 },
 			'rand_id': { $first: "$_id" }
 			//TODO: 'keys': { $sum: 1 },
 		}
 	}, {
+		$sort: {
+			created: 1
+		}
+	}, {
 		$project: {
 			_id: "$rand_id",
 			date: '$_id',
+			first: '$created',
 			count: '$count'
 		}
 	}], {

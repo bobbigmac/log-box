@@ -1,5 +1,15 @@
 const makeDate = function(date) {
-	return ((date && new Date(date.year || 2010, date.month || 1, date.day || 1, date.hour || 0, date.minute || 0, date.second || 0)) || new Date());
+	return ((date && new Date(date.year || 2010, date.month - 1 || 1, date.day || 1, date.hour || 0, date.minute || 0, date.second || 0)) || new Date());
+}
+const addDays = function(date, days) {
+    var result = new Date(date);
+    result.setDate(result.getDate() + days);
+    return result;
+}
+const addHours = function(date, hours) {
+    var result = new Date(date);
+    result.setTime(result.getTime() + (hours*60*60*1000));
+    return result;
 }
 
 SummaryChart = React.createClass({
@@ -19,22 +29,37 @@ SummaryChart = React.createClass({
 	},
 	componentWillUpdate(nextProps) {
 		if(this.data && this.data.periods) {
-			const both = this.data.periods.reduce(function(both, p) {
+			let handledLast = false
+			const periods = this.data.periods.sort((a, b) => a.first > b.first ? 1 : -1);
 
-				both[0].push(makeDate(p.date));
+			const both = periods.reduce(function(both, p, pos) {
+				const date = p.date && makeDate(p.date);
+
+				both[0].push(date);
 				both[1].push(p.count);
 
-				//TODO: Adapt this if wanting to interpolate ticks
-				// if(periods[pos+1] && periods[pos+1].date) {
-				// 	var nextDate = makeDate(periods[pos+1].date);
-				// 	var hoursDiff = (Math.abs(nextDate - date) / 36e5) - 1;//(60*60*1000);
-				// 	//var plusOneDay = addDays(date, 1);
+				if((periods[pos+1] && periods[pos+1].date) || !handledLast) {
+					var nextDate = false;
+					if(periods[pos+1]) {
+						nextDate = makeDate(periods[pos+1].date);
+					} else {
+						handledLast = nextDate = new Date();
 
-				// 	console.log(date, nextDate, hoursDiff);
-				// 	for(var i = 0; i < hoursDiff; i++) {
-				// 		graph.series.addData({ date: addHours(date, i+1), count: 0 });
-				// 	}
-				// }
+						nextDate.setMinutes(0);
+						nextDate.setSeconds(0);
+						nextDate = addHours(nextDate, 1);
+					}
+
+					var hoursDiff = ((nextDate - date) / 36e5) - 1;//(60*60*1000);
+					
+					for(var i = 0; i < hoursDiff; i++) {
+						both[0].push(addHours(date, i+1));
+						if(!handledLast) { // Don't show line-part for next hour.
+							// Adds zero-value entries (omit to connect points)
+							both[1].push(0);
+						}
+					}
+				}
 				return both;
 			}, [['x'], ['count']]);
 
@@ -44,6 +69,7 @@ SummaryChart = React.createClass({
 		}
 	},
 	componentDidMount() {
+		// See http://c3js.org/reference.html
 		chart = c3.generate({
 			bindto: this.refs['chart-container'],
 			data: {
@@ -58,13 +84,14 @@ SummaryChart = React.createClass({
 				x: {
 					type: 'timeseries',
 					tick: {
-						format: '%d/%H',
-            // format: function (x) {
-            //   if(x.getHours() === 0) {
-            //     return x;
-            //   }
-            // },
+						format: '%d/%Hh',
+      			fit: true,
 						rotate: 40,
+					}
+				},
+				y2: {
+					tick: {
+						min: 0
 					}
 				}
 			}
