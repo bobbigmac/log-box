@@ -1,5 +1,7 @@
+let rerenderTimeout = false
+
 const makeDate = function(date) {
-	return ((date && new Date(date.year || 2010, date.month - 1 || 1, date.day || 1, date.hour || 0, date.minute || 0, date.second || 0)) || new Date());
+	return ((date && new Date(date.year || 2015, date.month - 1 || 1, date.day || 1, date.hour || 0, date.minute || 0, date.second || 0)) || new Date());
 }
 const addDays = function(date, days) {
     var result = new Date(date);
@@ -8,7 +10,7 @@ const addDays = function(date, days) {
 }
 const addHours = function(date, hours) {
     var result = new Date(date);
-    result.setTime(result.getTime() + (hours*60*60*1000));
+    result.setTime(result.getTime() + (hours*36e5));//60*60*1000
     return result;
 }
 
@@ -22,7 +24,7 @@ SummaryChart = React.createClass({
 				loading: !handle.ready(),
 				user: Meteor.user(),
 				periods: EventsGroups.find().fetch(),
-				//TODO: currentHour (reactively update this?)
+				currentTime: Session.get('current-time')
 			};
 		} else {
 			return {};
@@ -52,7 +54,6 @@ SummaryChart = React.createClass({
 					}
 
 					const hoursDiff = ((nextDate - date) / 36e5) - 1;//(60*60*1000);
-					//console.log(hoursDiff, nextDate, date);
 					
 					for(var i = 0; i < hoursDiff; i++) {
 						let newDate = addHours(date, i+1);
@@ -69,6 +70,13 @@ SummaryChart = React.createClass({
 				columns: both
 			});
 		}
+
+		//Re-render each minute (no data to show, but will ensure chart always shows to current hour)
+		const rerenderMs = 1000 * 60;
+		if(rerenderTimeout) {
+			Meteor.clearTimeout(rerenderTimeout);
+		}
+		rerenderTimeout = Meteor.setTimeout(function() { Session.set('current-time', new Date()); }.bind(this), rerenderMs);
 	},
 	componentDidMount() {
 		// See http://c3js.org/reference.html
@@ -98,7 +106,6 @@ SummaryChart = React.createClass({
 				}
 			}
 		});
-
 	},
 	render() {
 		return (

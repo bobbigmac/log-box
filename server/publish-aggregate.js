@@ -1,8 +1,14 @@
 
 Meteor.publish("eventsGroups", function(filter) {
+
+	var result = new Date();
+	var timeLimit = result.setDate(result.getDate() - 4);
+	//console.log('timeLimit', timeLimit, new Date(timeLimit));
+
 	ReactiveAggregate(this, Events, [{
 		$match: {
 			"created": { $type: 9 },
+			"created": { $gt: new Date(timeLimit) },
 			"owner": this.userId
 		}
 	}, {
