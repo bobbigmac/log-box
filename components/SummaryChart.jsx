@@ -21,7 +21,8 @@ SummaryChart = React.createClass({
 			return {
 				loading: !handle.ready(),
 				user: Meteor.user(),
-				periods: EventsGroups.find().fetch()
+				periods: EventsGroups.find().fetch(),
+				//TODO: currentHour (reactively update this?)
 			};
 		} else {
 			return {};
@@ -39,7 +40,7 @@ SummaryChart = React.createClass({
 				both[1].push(p.count);
 
 				if((periods[pos+1] && periods[pos+1].date) || !handledLast) {
-					var nextDate = false;
+					let nextDate = false;
 					if(periods[pos+1]) {
 						nextDate = makeDate(periods[pos+1].date);
 					} else {
@@ -50,12 +51,13 @@ SummaryChart = React.createClass({
 						nextDate = addHours(nextDate, 1);
 					}
 
-					var hoursDiff = ((nextDate - date) / 36e5) - 1;//(60*60*1000);
+					const hoursDiff = ((nextDate - date) / 36e5) - 1;//(60*60*1000);
+					//console.log(hoursDiff, nextDate, date);
 					
 					for(var i = 0; i < hoursDiff; i++) {
-						both[0].push(addHours(date, i+1));
-						if(!handledLast) { // Don't show line-part for next hour.
-							// Adds zero-value entries (omit to connect points)
+						let newDate = addHours(date, i+1);
+						both[0].push(newDate);
+						if(!(newDate.getTime() > (new Date().getTime() - 36e5))) {
 							both[1].push(0);
 						}
 					}
@@ -89,7 +91,7 @@ SummaryChart = React.createClass({
 						rotate: 40,
 					}
 				},
-				y2: {
+				y: {
 					tick: {
 						min: 0
 					}
