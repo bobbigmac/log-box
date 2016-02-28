@@ -102,6 +102,9 @@ SummaryChart = React.createClass({
 				y: {
 					tick: {
 						min: 0
+					},
+					padding: {
+						bottom: 0
 					}
 				}
 			}
