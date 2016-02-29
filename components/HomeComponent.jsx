@@ -2,7 +2,6 @@ HomeComponent = React.createClass({
   mixins: [ReactMeteorData],
   getMeteorData() {
     Meteor.subscribe("apikey");
-    //Meteor.subscribe("eventsGroups");
     var handle = Meteor.subscribe("events", {
     	sort: { created: -1 }
     });
@@ -26,17 +25,16 @@ HomeComponent = React.createClass({
 						<span>GET, PUT or POST events to /add with any fields, including {"{"} owner: {this.data.user.apikey} {"}"}</span>
 					</div> )}
 
-				<h3 className="title">
+				{this.data.user && <h3 className="title">
 					{((this.data.user) && 
 						<button className="btn btn-default pull-right" onClick={this.addTestRecord}>Add Test Record</button>
 					)}
 					{(this.data.events && this.data.events.length||0)+"/"+(this.data && this.data.eventCount||0)+' Events'}
-				</h3>
+				</h3>}
 
-				{Meteor.isClient && <SummaryChart />}
+				{this.data.user && Meteor.isClient && <SummaryChart />}
 
 				{this.data.events.map(function(item, i) {
-					//console.log(item);
 					return (
 						<h3 key={item._id}>
 							{(item.created && <span className="pull-right">{new moment(new Date(item.created)).fromNow()}</span>)}
@@ -45,7 +43,7 @@ HomeComponent = React.createClass({
 					);
 				}, this)}
 
-	      <DocumentTitle title={(this.data.events && this.data.events.length||0)+' Events - '+BrandName} />
+	      <DocumentTitle title={(this.data.events.length||0)+'/'+(this.data.eventCount||0)+' Events - '+BrandName} />
 			</section>
 		);
   }

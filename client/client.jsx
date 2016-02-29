@@ -12,15 +12,15 @@ Meteor.startup(function () {
 		//     limit: 3 // when fourth alert appears all previous ones are cleared 
 		// } 
 		offset: 0, // in px - will be added to first alert (bottom or top - depends of the position in config) 
-		beep: false,
+		//beep: true,
 		// examples: 
 		// beep: '/beep.mp3'  // or you can pass an object: 
-		beep: { 
+		/*beep: { 
 	    info: '/beep-info.mp3', 
 	    error: '/beep-error.mp3', 
 	    success: '/beep-success.mp3', 
 	    warning: '/beep-warning.mp3' 
-		},
+		},*/
 		onClose: _.noop // 
 		// examples: 
 		// onClose: function() { 
@@ -32,17 +32,19 @@ Meteor.startup(function () {
 		added: function (id, fields) {
 			var message = fields.message || fields.title || fields.text;
 
-			if(message && fields && fields.level == 'error') {
-				sAlert.error(message);
-			}
-			if(message && fields && fields.level == 'warning') {
-				sAlert.warning(message);
-			}
-			if(message && fields && fields.level == 'success') {
-				sAlert.success(message);
-			}
-			if(message && fields && (fields.level == 'info' || !fields.level)) {
-				sAlert.info(message);
+			if(fields.created && moment().diff(fields.created, 'minutes') < 5) {
+				if(message && fields && fields.level == 'error') {
+					sAlert.error(message);
+				}
+				if(message && fields && fields.level == 'warning') {
+					sAlert.warning(message);
+				}
+				if(message && fields && fields.level == 'success') {
+					sAlert.success(message);
+				}
+				if(message && fields && (fields.level == 'info' || !fields.level)) {
+					sAlert.info(message);
+				}
 			}
 		}
 	});

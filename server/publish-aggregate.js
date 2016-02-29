@@ -22,7 +22,11 @@ Meteor.publish("eventsGroups", function(filter) {
       },
       'created': { "$first": "$created" },
 			'count': { $sum: 1 },
-			'rand_id': { $first: "$_id" }
+			'rand_id': { $first: "$_id" },
+			'error': { $sum: { $cond: { if: { $eq: ['$level', 'error'] }, then: 1, else: 0 }}},
+			'warning': { $sum: { $cond: { if: { $eq: ['$level', 'warning'] }, then: 1, else: 0 }}},
+			'info': { $sum: { $cond: { if: { $eq: ['$level', 'info'] }, then: 1, else: 0 }}},
+			'success': { $sum: { $cond: { if: { $eq: ['$level', 'success'] }, then: 1, else: 0 }}},
 			//TODO: 'keys': { $sum: 1 },
 		}
 	}, {
@@ -34,7 +38,11 @@ Meteor.publish("eventsGroups", function(filter) {
 			_id: "$rand_id",
 			date: '$_id',
 			first: '$created',
-			count: '$count'
+			count: '$count',
+			error: '$error',
+			warning: '$warning',
+			info: '$info',
+			success: '$success',
 		}
 	}], {
 		observeSelector: {

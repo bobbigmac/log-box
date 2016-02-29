@@ -20,6 +20,9 @@ if (Meteor.isServer) {
 								if(!event.created) {
 									event.created = new Date();
 								}
+								if(!event.level) {
+									event.level = 'info';
+								}
 
 								// Validate owner exists and has permission
 								var user = Meteor.users.findOne({ apikey: (event.owner+'').toLowerCase() }, { fields: { _id: 1 }});

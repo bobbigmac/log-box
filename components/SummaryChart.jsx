@@ -39,7 +39,11 @@ SummaryChart = React.createClass({
 				const date = p.date && makeDate(p.date);
 
 				both[0].push(date);
-				both[1].push(p.count);
+				both[1].push(p.count || 0);//TODO: currently not showing total count, p.count || 0);
+				both[2].push(p.error || 0);
+				both[3].push(p.warning || 0);
+				both[4].push(p.info || 0);
+				both[5].push(p.success || 0);
 
 				if((periods[pos+1] && periods[pos+1].date) || !handledLast) {
 					let nextDate = false;
@@ -59,12 +63,14 @@ SummaryChart = React.createClass({
 						let newDate = addHours(date, i+1);
 						both[0].push(newDate);
 						if(!(newDate.getTime() > (new Date().getTime() - 36e5))) {
-							both[1].push(0);
+							for(var j = 1; j < 6; j++) {
+								both[j].push(0);
+							}
 						}
 					}
 				}
 				return both;
-			}, [['x'], ['count']]);
+			}, [['x'], ['total'], ['error'], ['warning'], ['info'], ['success']]);
 
 			chart.load({
 				columns: both
@@ -87,8 +93,19 @@ SummaryChart = React.createClass({
 				//xFormat: '%Y-%m-%d %H:%M:%S',
 				columns: [
 					['x'],
-					['count']
-				]
+					['total'],
+					['error'],
+					['warning'],
+					['info'],
+					['success'],
+				],
+			  colors: {
+			    total: '#999999',
+			    error: '#d9534f',
+			    warning: '#f0ad4e',
+			    info: '#5bc0de',
+			    success: '#5cb85c',
+			  }
 			},
 			axis: {
 				x: {
@@ -116,7 +133,7 @@ SummaryChart = React.createClass({
 				<div ref="chart-container">
 				</div>
 				<div ref="table-container">
-					<Table cols={['Year', 'Month', 'Day', 'Hour', 'Events']}>
+					<Table cols={['Year', 'Month', 'Day', 'Hour', 'Events', 'Error', 'Warning', 'Info', 'Success']}>
 						{this.data && this.data.periods.map(function(period) {
 							return (
 								<tr key={period._id}>
@@ -125,6 +142,10 @@ SummaryChart = React.createClass({
 									<td>{period.date.day}</td>
 									<td>{period.date.hour}</td>
 									<td>{period.count}</td>
+									<td>{period.error}</td>
+									<td>{period.warning}</td>
+									<td>{period.info}</td>
+									<td>{period.success}</td>
 								</tr>
 							)
 						})}
