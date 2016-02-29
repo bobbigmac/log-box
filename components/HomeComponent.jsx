@@ -38,7 +38,7 @@ HomeComponent = React.createClass({
 					return (
 						<h3 key={item._id}>
 							{(item.created && <span className="pull-right">{new moment(new Date(item.created)).fromNow()}</span>)}
-							<a href={FlowHelpers.pathFor('edit-event', { id: item._id })}>{item.title}</a>
+							<a href={FlowHelpers.pathFor('edit-event', { id: item._id })}>{(item.title || item.message || item.messageTemplate)}</a>
 						</h3>
 					);
 				}, this)}
