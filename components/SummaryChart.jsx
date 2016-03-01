@@ -20,10 +20,12 @@ SummaryChart = React.createClass({
 		if(Meteor.isClient) {
 			var handle = Meteor.subscribe("eventsGroups");
 
+			var batches = EventsGroups.find({ 'date.product': this.props.product });
+			//console.log(batches.count());
 			return {
 				loading: !handle.ready(),
 				user: Meteor.user(),
-				periods: EventsGroups.find().fetch(),
+				periods: batches.fetch(),
 				currentTime: Session.get('current-time')
 			};
 		} else {
@@ -44,6 +46,8 @@ SummaryChart = React.createClass({
 				both[3].push(p.warning || 0);
 				both[4].push(p.info || 0);
 				both[5].push(p.success || 0);
+				both[6].push(p.fatal || 0);
+				both[7].push(p.debug || 0);
 
 				if((periods[pos+1] && periods[pos+1].date) || !handledLast) {
 					let nextDate = false;
@@ -63,16 +67,16 @@ SummaryChart = React.createClass({
 						let newDate = addHours(date, i+1);
 						both[0].push(newDate);
 						if(!(newDate.getTime() > (new Date().getTime() - 36e5))) {
-							for(var j = 1; j < 6; j++) {
+							for(var j = 1; j < 8; j++) {
 								both[j].push(0);
 							}
 						}
 					}
 				}
 				return both;
-			}, [['x'], ['total'], ['error'], ['warning'], ['info'], ['success']]);
+			}, [['x'], ['total'], ['error'], ['warning'], ['info'], ['success'], ['fatal'], ['debug']]);
 
-			chart.load({
+			this.chart.load({
 				columns: both
 			});
 		}
@@ -86,7 +90,7 @@ SummaryChart = React.createClass({
 	},
 	componentDidMount() {
 		// See http://c3js.org/reference.html
-		chart = c3.generate({
+		this.chart = c3.generate({
 			bindto: this.refs['chart-container'],
 			data: {
 				x: 'x',
@@ -98,6 +102,8 @@ SummaryChart = React.createClass({
 					['warning'],
 					['info'],
 					['success'],
+					['fatal'],
+					['debug'],
 				],
 			  colors: {
 			    total: '#999999',
@@ -105,7 +111,13 @@ SummaryChart = React.createClass({
 			    warning: '#f0ad4e',
 			    info: '#5bc0de',
 			    success: '#5cb85c',
-			  }
+			    fatal: '#ff0000',
+			    debug: '#cccccc',
+			  },
+        /*axes: {
+          //data1: 'y',
+          total: 'y2'
+        }*/
 			},
 			axis: {
 				x: {
@@ -123,33 +135,23 @@ SummaryChart = React.createClass({
 					padding: {
 						bottom: 0
 					}
-				}
+				},
+				/*y2: {
+					tick: {
+						min: 0
+					},
+					padding: {
+						bottom: 0
+					}
+				}*/
 			}
 		});
 	},
 	render() {
+		//const currentDay = (new Date()).getDay();
 		return (
 			<section>
 				<div ref="chart-container">
-				</div>
-				<div ref="table-container">
-					<Table cols={['Year', 'Month', 'Day', 'Hour', 'Events', 'Error', 'Warning', 'Info', 'Success']}>
-						{this.data && this.data.periods.map(function(period) {
-							return (
-								<tr key={period._id}>
-									<td>{period.date.year}</td>
-									<td>{period.date.month}</td>
-									<td>{period.date.day}</td>
-									<td>{period.date.hour}</td>
-									<td>{period.count}</td>
-									<td>{period.error}</td>
-									<td>{period.warning}</td>
-									<td>{period.info}</td>
-									<td>{period.success}</td>
-								</tr>
-							)
-						})}
-					</Table>
 				</div>
 			</section>
 		);

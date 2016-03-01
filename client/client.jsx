@@ -33,7 +33,7 @@ Meteor.startup(function () {
 			var message = fields.message || fields.title || fields.text;
 
 			if(fields.created && moment().diff(fields.created, 'minutes') < 5) {
-				if(message && fields && fields.level == 'error') {
+				if(message && fields && (fields.level == 'fatal' || fields.level == 'error')) {
 					sAlert.error(message);
 				}
 				if(message && fields && fields.level == 'warning') {
@@ -42,7 +42,7 @@ Meteor.startup(function () {
 				if(message && fields && fields.level == 'success') {
 					sAlert.success(message);
 				}
-				if(message && fields && (fields.level == 'info' || !fields.level)) {
+				if(message && fields && (fields.level == 'info' || fields.level == 'debug' || !fields.level)) {
 					sAlert.info(message);
 				}
 			}

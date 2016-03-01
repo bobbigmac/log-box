@@ -11,7 +11,15 @@ Meteor.startup(function() {
 
 Accounts.onCreateUser(function(options, user) {
   user.roles = ['basic'];
-  user.apikey = Random.id().toLowerCase();
+  
+  //user.apikey = Random.id().toLowerCase();
+  console.log('creating a default product for new user', user._id, user, options);
+  Products.insert({
+  	owner: user._id,
+  	apikey: Random.id().toLowerCase(),
+  	name: 'Default Product Name',
+  	created: (new Date()) 
+  })
 
 	if(options.profile) {
 		user.profile = options.profile;

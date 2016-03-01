@@ -3,13 +3,17 @@ Meteor.publish('event', function(id) {
 	return Events.find(id);
 });
 
-Meteor.publish('apikey', function() {
+Meteor.publish('products', function() {
+	return Products.find({ owner: this.userId });
+});
+
+/*Meteor.publish('apikey', function() {
 	if(this.userId) {
 		return Meteor.users.find(this.userId, { fields: { apikey: 1 }});
 	}
 	this.ready();
 	return;
-});
+});*/
 
 Meteor.publish('events', function(options) {
 	options = (options && options instanceof Object && options) || {};

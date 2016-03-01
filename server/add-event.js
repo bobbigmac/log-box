@@ -12,9 +12,19 @@ WebApp.connectHandlers.use('/add',
 			if(event.owner) {
 				var eventKeys = Object.keys(event);
 				if(eventKeys.length > 1) {
+
+					// Set remotes in case it was sent from client-side
 					if(req.headers instanceof Object && req.headers['user-agent'] && !event['user-agent']) {
 						event['user-agent'] = req.headers['user-agent'];
 					}
+					if(!event.ip) {
+						event['ip-address'] = //req.headers['x-forwarded-for'] || //spoofable, maybe useful in future
+				     (req.connection && req.connection.remoteAddress) || 
+				     (req.socket && req.socket.remoteAddress) ||
+				     (req.connection && req.connection.socket.remoteAddress);
+					}
+
+					// Enforce created (or from timestamp)
 					if(!event.created && event.timestamp) {
 						try {
 							event.created = new Date(event.timestamp);
@@ -23,6 +33,8 @@ WebApp.connectHandlers.use('/add',
 					if(!event.created) {
 						event.created = new Date();
 					}
+
+					// Enforce a level property
 					if(event.levelString && (!event.level || typeof event.level == 'number')) {
 						if(typeof event.levelNo === 'undefined') {
 							event.levelNo = event.level;
@@ -34,9 +46,10 @@ WebApp.connectHandlers.use('/add',
 					}
 
 					// Validate owner exists and has permission
-					var user = Meteor.users.findOne({ apikey: (event.owner+'').toLowerCase() }, { fields: { _id: 1 }});
-					if(user) {
-						event.owner = user._id;
+					var product = Products.findOne({ apikey: (event.owner+'').toLowerCase() }, { fields: { _id: 1, owner: 1 }});
+					if(product) {
+						event.product = product._id;
+						event.owner = product.owner;
 
 						// Add new event for user
 						content = Events.insert(event);
