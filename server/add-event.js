@@ -34,16 +34,19 @@ WebApp.connectHandlers.use('/add',
 						event.created = new Date();
 					}
 
-					// Enforce a level property
-					if(event.levelString && (!event.level || typeof event.level == 'number')) {
+					// Enforce a level property (bodgy)
+					if((event.levelString || event.LevelString) && (!event.level || typeof event.level == 'number')) {
 						if(typeof event.levelNo === 'undefined') {
 							event.levelNo = event.level;
 						}
-						event.level = event.levelString;
+						event.level = (event.levelString || event.LevelString);
+						delete event.levelString;
 					}
 					if(!event.level) {
 						event.level = 'info';
 					}
+
+					//TODO: Probably worth pushing these to a temp collection then processing separately via observer, to speed up this process for the caller.
 
 					// Validate owner exists and has permission
 					var product = Products.findOne({ apikey: (event.owner+'').toLowerCase() }, { fields: { _id: 1, owner: 1 }});
@@ -61,6 +64,7 @@ WebApp.connectHandlers.use('/add',
 			}
 		}
 	} catch(exc) {
+		console.log(exc);
 		code = 500;
 	}
 
