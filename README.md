@@ -29,6 +29,9 @@ Session.set('masonryCap', 3);
 Products.update(Products.findOne({ name: 'Current Name' })._id, { $set: { name: 'New Name' }});
 //Delete a product
 Products.remove(Products.findOne({ name: 'Current Name' })._id);
+//Filter events list (both must be dates)
+Session.set('viewedStartDate', new Date(new Date().getTime()-(1000*60*60*1 /*an hour*/)));
+Session.set('viewedEndDate', new Date());
 ```
 
 ## Todo
