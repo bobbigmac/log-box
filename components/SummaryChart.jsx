@@ -88,6 +88,12 @@ SummaryChart = React.createClass({
 		}
 		rerenderTimeout = Meteor.setTimeout(function() { Session.set('current-time', new Date()); }.bind(this), rerenderMs);
 	},
+	dataPointClicked(d, el) {
+		if(d && d.x) {
+			Session.set('viewedStartDate', d.x);
+			Session.set('viewedEndDate', addHours(d.x, 1));
+		}
+	},
 	componentDidMount() {
 		// See http://c3js.org/reference.html
 		this.chart = c3.generate({
@@ -95,6 +101,7 @@ SummaryChart = React.createClass({
 			data: {
 				x: 'x',
 				//xFormat: '%Y-%m-%d %H:%M:%S',
+				onclick: this.dataPointClicked,
 				columns: [
 					['x'],
 					['total'],

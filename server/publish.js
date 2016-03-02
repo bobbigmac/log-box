@@ -35,6 +35,7 @@ Meteor.publish('events', function(options) {
 			queryOptions.limit = limit;
 		}
 
+		//console.log(filter);
 		filter.owner = this.userId;
 		return Events.find(filter, queryOptions);
 	}

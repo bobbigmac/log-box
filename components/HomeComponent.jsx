@@ -2,16 +2,25 @@ HomeComponent = React.createClass({
   mixins: [ReactMeteorData],
   getMeteorData() {
     //Meteor.subscribe("apikey");
+    const StartDate = typeof Session != 'undefined' && Session.get('viewedStartDate');
+    const EndDate = typeof Session != 'undefined' && Session.get('viewedEndDate');
+
     Meteor.subscribe("products");
-    var handle = Meteor.subscribe("events", {
+
+    var sub = {
     	sort: { created: -1 }
-    });
+    };
+    if(StartDate && EndDate) {
+    	sub.filter = { created: { $gte: StartDate, $lte: EndDate }};
+    }
+    var handle = Meteor.subscribe("events", sub);
 
     return {
     	user: Meteor.user(),
       events: Events.find({}, { sort: { created: -1 }}).fetch(),
       products: Products.find().fetch(),
-      eventCount: (Meteor.isClient ? EventsGroups.find().fetch().reduce((prev, eg) => prev+eg.count, 0) : false)
+      eventCount: (Meteor.isClient ? EventsGroups.find().fetch().reduce((prev, eg) => prev+eg.count, 0) : false),
+      capSize: ((typeof Session != 'undefined' && Session.get('masonryCap')) || 2)
     };
   },
   addTestRecord(productId) {
@@ -25,21 +34,25 @@ HomeComponent = React.createClass({
 			return (<RegisterWarning show={!this.data.user} message="You must register to register log events and view realtime messages" />)
   	};
 
+		const capSize = this.data && this.data.capSize;
+
 		return (
 			<section>
-				{this.data.products.map(function(product) {
-					return (
-						<section className="product-group" key={product._id}>
-							<div className="alert alert-info" role="alert">
-								<button className="btn btn-default pull-right hidden" onClick={this.addTestRecord.bind(this, product._id)}>Add Test Record</button>
-								<div className="pull-right">GET, PUT or POST events to /add with any fields, including {"{"} owner: {product.apikey} {"}"}</div>
-								<div>Product: {product.name}</div>
-							</div>
+				<div className={"masonry-wall masonry-cap-"+capSize}>
+					{this.data.products.map(function(product) {
+						return (
+							<section className="masonry-brick product-group" key={product._id}>
+								<div className="alert alert-info" role="alert">
+									<button className="btn btn-default pull-right hidden" onClick={this.addTestRecord.bind(this, product._id)}>Add Test Record</button>
+									<div className="pull-right">Owner: {product.apikey}</div>
+									<div><strong>{product.name}</strong></div>
+								</div>
 
-							{Meteor.isClient && <SummaryChart product={product._id} />}
-						</section>
-					)
-				}.bind(this))}
+								{Meteor.isClient && <SummaryChart product={product._id} />}
+							</section>
+						)
+					}.bind(this))}
+				</div>
 
 				<h3 className="title">
 					<button className="btn btn-default pull-right" onClick={this.addProduct}>Add Product</button>

@@ -15,12 +15,12 @@ Event = React.createClass({
 			//See https://github.com/Lapple/react-json-inspector
 			detail = <JsonInspector data={item} />
 		}
-		
+
 		return (
 			<div>
-				<h3 key={item._id}>
+				<h3 className={"event-"+item.level}>
 					{(item.created && <span className="pull-right">{new moment(new Date(item.created)).fromNow()}</span>)}
-					<a onClick={this.toggleDetail} href={FlowHelpers.pathFor('edit-event', { id: item._id })}>
+					<a className="event-title" onClick={this.toggleDetail}>
 						{(item.title || item.message || item.messageTemplate || item._id)}
 					</a>
 				</h3>

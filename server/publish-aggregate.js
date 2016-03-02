@@ -2,6 +2,7 @@
 Meteor.publish("eventsGroups", function(filter) {
 
 	var result = new Date();
+	//TODO: Accept a timeLimit (or date range) as input
 	var timeLimit = result.setDate(result.getDate() - 4);
 	//console.log('timeLimit', timeLimit, new Date(timeLimit));
 
