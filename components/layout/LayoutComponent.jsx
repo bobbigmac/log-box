@@ -4,7 +4,7 @@ LayoutComponent = React.createClass({
 		return (
 			<div>
 				<NavComponent brand={this.brand} />
-				<div className="container">
+				<div className="container-fluid">
 				  <div className="row">
 				    <div className="col-sm-12">
 				    	{this.props.yield}
