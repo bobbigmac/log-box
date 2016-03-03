@@ -18,12 +18,18 @@ HomeComponent = React.createClass({
     var user = Meteor.user();
     var profile = ((user && user.profile) || {});
 
+    var capSize = profile.masonryCap || Session.get('masonryCap');
+    if(!capSize) {
+    	capSize = 2;
+    	Session.set('masonryCap', capSize);
+    }
+
     return {
     	user: user,
       events: Events.find({}, { sort: { created: -1 }}).fetch(),
       products: Products.find().fetch(),
       eventCount: (Meteor.isClient ? EventsGroups.find().fetch().reduce((prev, eg) => prev+eg.count, 0) : false),
-      capSize: (profile.masonryCap || Session.get('masonryCap') || 2)
+      capSize: capSize
     };
   },
   addProduct() {
@@ -67,7 +73,7 @@ HomeComponent = React.createClass({
 									<Event event={item} key={item._id} />
 								);
 							}.bind(this))}
-							
+
 						</div>
 					</div>
 				</div>
