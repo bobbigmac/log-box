@@ -118,6 +118,8 @@ SummaryChart = React.createClass({
 					['fatal'],
 					['debug'],
 				],
+        //type: 'area-spline',
+        type: 'spline',
 			  colors: {
 			    total: '#999999',
 			    error: '#d9534f',

@@ -23,8 +23,6 @@ Click an Event heading to inspect the full event data. Click a data-point in a c
 Some features don't have UI components to set:
 
 ```javascript
-//Change number of columns the graphs fit (accepting 1-4)
-Session.set('masonryCap', 3);
 //Rename a product
 Products.update(Products.findOne({ name: 'Current Name' })._id, { $set: { name: 'New Name' }});
 //Delete a product

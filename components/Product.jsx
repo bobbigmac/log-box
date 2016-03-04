@@ -19,6 +19,8 @@ Product = React.createClass({
 				</div>
 
 				{Meteor.isClient && <SummaryChart product={product._id} />}
+
+				<ProductSettings product={product._id} />
 			</section>
 		)
 	}
