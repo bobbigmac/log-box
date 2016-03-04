@@ -2,16 +2,19 @@ HomeComponent = React.createClass({
   mixins: [ReactMeteorData],
   getMeteorData() {
     //Meteor.subscribe("apikey");
-    const StartDate = typeof Session != 'undefined' && Session.get('viewedStartDate');
-    const EndDate = typeof Session != 'undefined' && Session.get('viewedEndDate');
+    const StartDate = Session.get('viewedStartDate');
+    const EndDate = Session.get('viewedEndDate');
 
     Meteor.subscribe("products");
 
     var sub = {
-    	sort: { created: -1 }
+    	sort: { created: -1 },
+    	filter: {}
     };
     if(StartDate && EndDate) {
-    	sub.filter = { created: { $gte: StartDate, $lte: EndDate }};
+    	sub.filter.created = { $gte: StartDate, $lte: EndDate };
+    } else {
+    	sub.filter.level = { $in: ['fatal', 'error', 'warning'] };
     }
     var handle = Meteor.subscribe("events", sub);
 

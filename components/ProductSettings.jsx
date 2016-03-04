@@ -54,9 +54,22 @@ ProductSettings = React.createClass({
 			<section className="product-settings-container">
 				<div className="row">
 					<div className="col-xs-12">
+						<h4>Product Settings <small>(placeholder)</small></h4>
+					</div>
+				</div>
+				<div className="row">
+					<div className="col-xs-12">
+						{!this.state.loading && <button className="btn btn-default pull-right" onClick={this.calculateCommons}>Recalculate Common Fields</button>}
+						<strong>Common Fields: </strong>
+						{!Object.keys(this.data.commons).length && 'No common fields for all events'}
 						{Object.keys(this.data.commons).map(function(c) {
-							return (<div>{c}</div>);
-						})}
+							return (<div key={c}><strong>{c}</strong>: {
+								Object.keys(this.data.commons[c]).map(function(x) {
+									return (<span className="common-field-value" key={x}>{x}: {this.data.commons[c][x]}</span>)
+								}.bind(this))
+							}
+							</div>);
+						}.bind(this))}
 					</div>
 				</div>
 			</section>

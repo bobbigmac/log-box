@@ -4,10 +4,15 @@ UserSettings = React.createClass({
 		const user = Meteor.user();
     const profile = (user && user.profile) || {};
 
+    const StartDate = Session.get('viewedStartDate');
+    const EndDate = Session.get('viewedEndDate');
+
     return {
     	user: user,
       profile: profile,
       masonryCap: profile.masonryCap || Session.get('masonryCap'),
+      startDate: StartDate,
+      endDate: EndDate
     };
 	},
 	setUserProfile(key, val) {
@@ -25,6 +30,10 @@ UserSettings = React.createClass({
 			Session.set('masonryCap', val);
 			this.setUserProfile('masonryCap', val);
 		}
+	},
+	clearDateFilter() {
+		Session.set('viewedStartDate', false);
+		Session.set('viewedEndDate', false);
 	},
 	render() {
 		if(!this.data.user) {
@@ -44,6 +53,11 @@ UserSettings = React.createClass({
 								<i className="glyphicon glyphicon-chevron-right"></i>
 							</a>
 						</div>
+						&nbsp;
+						{this.data.startDate && <div className="btn-group" role="group">
+							<button className="btn btn-warning" onClick={this.clearDateFilter}>Clear Date Filter</button>
+						</div>}
+
 					</div>
 				</div>
 			</section>
