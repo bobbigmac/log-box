@@ -15,7 +15,7 @@ const addHours = function(date, hours) {
 }
 
 SummaryChart = React.createClass({
-	mixins: [ReactMeteorData],
+	mixins: [ReactMeteorData,TimerMixin],
 	getMeteorData() {
 		if(Meteor.isClient) {
 			var handle = Meteor.subscribe("eventsGroups");
@@ -31,6 +31,12 @@ SummaryChart = React.createClass({
 		} else {
 			return {};
 		}
+	},
+	getInitialState() {
+		var now = new Date();
+    return {
+    	currentDate: now
+    };
 	},
 	componentWillUpdate(nextProps) {
 		if(this.data && this.data.periods) {
@@ -153,6 +159,11 @@ SummaryChart = React.createClass({
 				}*/
 			}
 		});
+
+    this.setInterval(function() {
+			var now = new Date();
+    	this.setState({ currentDate: now });
+    }.bind(this), 60*1000);
 	},
 	render() {
 		//const currentDay = (new Date()).getDay();

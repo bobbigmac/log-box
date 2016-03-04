@@ -18,7 +18,7 @@ Event = React.createClass({
 	},
   componentDidMount() {
   	//Could use setTimeout and update the wait more specifically
-    this.setInterval(this.updateFromNow, this.state.waitSeconds);
+    this.setInterval(this.updateFromNow, this.state.waitMs);
   },
   updateFromNow() {
   	const newNow = this.state.moment.fromNow();
