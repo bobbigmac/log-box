@@ -19,8 +19,11 @@ SummaryChart = React.createClass({
 	getMeteorData() {
 		if(Meteor.isClient) {
 			var timeLimitDays = Session.get('timeLimitDays') || 2;
-			
-			//TODO: Support passing parts of aggregator to the subscription
+
+			var product = Products.findOne(this.props.product);
+			var model = product && product.settings && product.settings.model;
+			//console.log('subbing with model', model);
+
 			var handle = Meteor.subscribe("eventsGroups", timeLimitDays);
 
 			var batches = EventsGroups.find({ 'date.product': this.props.product });

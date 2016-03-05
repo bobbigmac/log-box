@@ -7,7 +7,7 @@ Products.permit('insert')
 
 Products.permit('update')
 	.ifHasRole('basic')
-	.onlyProps(['name'])
+	.onlyProps(['name', 'settings'])
 	.updateModified()
 	.apply();
 

@@ -40,6 +40,14 @@ ProductSettings = React.createClass({
 	toggleDetail() {
 		this.setState({ detail: !this.state.detail });
 	},
+	setCommonField(commonField) {
+		if(commonField && this.data.commons && this.data.commons[commonField]) {
+			let model = {};
+			model[commonField] = this.data.commons[commonField].map(cf => [cf.v, 1]);
+
+			this.updateSetting('model', model);
+		}
+	},
 	render() {
 		if(!this.data.commons) {
 			return (<div className="alert alert-warning">
@@ -69,15 +77,17 @@ ProductSettings = React.createClass({
 				{this.state.detail && <div className="row">
 					<div className="col-xs-12">
 						{!this.state.loading && <button className="btn btn-default pull-right" onClick={this.calculateCommons}>Recalculate Common Fields</button>}
-						<strong>Common Fields: </strong>
+						<strong>Group By:</strong>
 						{!Object.keys(this.data.commons).length && 'No common fields for all events'}
-						{Object.keys(this.data.commons).map(function(c) {
-							return (<div key={c}><strong>{c}</strong>: {
-								this.data.commons[c].map(function(x) {
-									return (<span className="common-field-value" key={x.v}>{x.v}: {x.c}</span>)
-								}.bind(this))
-							}
-							</div>);
+
+						{Object.keys(this.data.commons).filter(c => (this.data.commons[c].length)).map(function(c) {
+							return (
+								<div key={c}>
+									<a className="btn btn-link" onClick={this.setCommonField.bind(this, c)}>
+										<strong>{c}</strong>
+										<span>: {this.data.commons[c].length} {pluraliseString('value', this.data.commons[c].length)}</span>
+									</a>
+								</div>);
 						}.bind(this))}
 					</div>
 				</div>}
