@@ -4,6 +4,7 @@ HomeComponent = React.createClass({
     //Meteor.subscribe("apikey");
     const StartDate = Session.get('viewedStartDate');
     const EndDate = Session.get('viewedEndDate');
+    const viewProductId = Session.get('viewedProduct');
 
     Meteor.subscribe("products");
 
@@ -16,6 +17,9 @@ HomeComponent = React.createClass({
     } else {
     	sub.filter.level = { $in: ['fatal', 'error', 'warning'] };
     }
+    if(viewProductId) {
+      sub.filter.product = viewProductId;
+    }
     var handle = Meteor.subscribe("events", sub);
 
     var user = Meteor.user();
@@ -27,12 +31,14 @@ HomeComponent = React.createClass({
     	Session.set('masonryCap', capSize);
     }
 
+    var viewedProduct = viewProductId && Products.findOne(viewProductId);
     return {
     	user: user,
       events: Events.find({}, { sort: { created: -1 }}).fetch(),
       products: Products.find().fetch(),
       eventCount: (Meteor.isClient ? EventsGroups.find().fetch().reduce((prev, eg) => prev+eg.count, 0) : false),
-      capSize: capSize
+      capSize: capSize,
+      viewedProduct: viewedProduct
     };
   },
   addProduct() {
@@ -48,7 +54,6 @@ HomeComponent = React.createClass({
 
 		return (
 			<section>
-				<UserSettings />
 
 				<div className="row">
 					<div className="col-xs-12">
@@ -61,6 +66,8 @@ HomeComponent = React.createClass({
 						</div>
 					</div>
 				</div>
+        
+        <UserSettings />
 
 				<div className="container">
 					<div className="row">
@@ -68,7 +75,7 @@ HomeComponent = React.createClass({
 
 							<h3 className="title">
 								<button className="btn btn-default pull-right" onClick={this.addProduct}>Add Product</button>
-								{(this.data.events && this.data.events.length||0)+"/"+(this.data && this.data.eventCount||0)+' Events'}
+								{(this.data.events && this.data.events.length||0)+"/"+(this.data && this.data.eventCount||0)+' Events'+(this.data.viewedProduct ? ' on ' + this.data.viewedProduct.name : '')}
 							</h3>
 
 							{this.data.events.map(function(item, i) {

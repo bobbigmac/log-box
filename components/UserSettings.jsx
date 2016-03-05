@@ -11,6 +11,7 @@ UserSettings = React.createClass({
     	user: user,
       profile: profile,
       masonryCap: profile.masonryCap || Session.get('masonryCap'),
+      timeLimitDays: (Session.get('timeLimitDays') || 2),
       startDate: StartDate,
       endDate: EndDate
     };
@@ -25,6 +26,9 @@ UserSettings = React.createClass({
 			});
 		}
 	},
+	setTimeLimitDays(val) {
+		Session.set('timeLimitDays', val);
+	},
 	setMasonryCap(val) {
 		if(typeof val == 'number' && val > 0 && val <= 4) {
 			Session.set('masonryCap', val);
@@ -34,6 +38,7 @@ UserSettings = React.createClass({
 	clearDateFilter() {
 		Session.set('viewedStartDate', false);
 		Session.set('viewedEndDate', false);
+		Session.set('viewedProduct', false);
 	},
 	render() {
 		if(!this.data.user) {
@@ -44,6 +49,7 @@ UserSettings = React.createClass({
 			<section className="container user-settings-container">
 				<div className="row">
 					<div className="col-xs-12">
+						
 						<div className="btn-group" role="group">
 							<a className="btn btn-default" disabled={this.data.masonryCap <= 1} onClick={this.setMasonryCap.bind(this, this.data.masonryCap - 1)}>
 								<i className="glyphicon glyphicon-chevron-left"></i>
@@ -53,9 +59,19 @@ UserSettings = React.createClass({
 								<i className="glyphicon glyphicon-chevron-right"></i>
 							</a>
 						</div>
-						&nbsp;
+
+						<div className="btn-group" role="group">
+							<a className="btn btn-default" disabled={this.data.timeLimitDays <= 1} onClick={this.setTimeLimitDays.bind(this, this.data.timeLimitDays - 1)}>
+								<i className="glyphicon glyphicon-chevron-left"></i>
+							</a>
+							<label className="btn btn-default" disabled>{(this.data.timeLimitDays || '') + " " + pluraliseString('Day', this.data.timeLimitDays)}</label>
+							<a className="btn btn-default" disabled={this.data.timeLimitDays >= 4} onClick={this.setTimeLimitDays.bind(this, this.data.timeLimitDays + 1)}>
+								<i className="glyphicon glyphicon-chevron-right"></i>
+							</a>
+						</div>
+
 						{this.data.startDate && <div className="btn-group" role="group">
-							<button className="btn btn-warning" onClick={this.clearDateFilter}>Clear Date Filter</button>
+							<button className="btn btn-warning" onClick={this.clearDateFilter}>Clear Event Filter</button>
 						</div>}
 
 					</div>

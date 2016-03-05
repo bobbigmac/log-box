@@ -1,15 +1,16 @@
 
-Meteor.publish("eventsGroups", function(filter) {
+Meteor.publish("eventsGroups", function(timeLimitDays) {
+	timeLimitDays = (typeof timeLimitDays == 'number' && timeLimitDays) || 2;
 
 	var result = new Date();
 	//TODO: Accept a timeLimit (or date range) as input
-	var timeLimit = result.setDate(result.getDate() - 4);
-	//console.log('timeLimit', timeLimit, new Date(timeLimit));
+	var timeLimit = result.setDate(result.getDate() - timeLimitDays);
+	//console.log(timeLimitDays, 'timeLimit', timeLimit, new Date(timeLimit));
 
 	ReactiveAggregate(this, Events, [{
 		$match: {
 			"created": { $type: 9 },
-			"created": { $gt: new Date(timeLimit) },
+			"created": { $gte: new Date(timeLimit) },
 			"product": { $exists: true },
 			"owner": this.userId
 		}
@@ -24,7 +25,7 @@ Meteor.publish("eventsGroups", function(filter) {
         //"minute": { "$minute": "$created" }
       },
       'created': { "$first": "$created" },
-			'count': { $sum: 1 },
+			'total': { $sum: 1 },
 			'rand_id': { $first: "$_id" },
 			'fatal': { $sum: { $cond: { if: { $eq: ['$level', 'fatal'] }, then: 1, else: 0 }}},
 			'error': { $sum: { $cond: { if: { $eq: ['$level', 'error'] }, then: 1, else: 0 }}},
@@ -43,7 +44,7 @@ Meteor.publish("eventsGroups", function(filter) {
 			_id: "$rand_id",
 			date: '$_id',
 			first: '$created',
-			count: '$count',
+			total: '$total',
 			fatal: '$fatal',
 			error: '$error',
 			warning: '$warning',

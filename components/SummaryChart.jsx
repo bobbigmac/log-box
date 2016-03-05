@@ -18,7 +18,10 @@ SummaryChart = React.createClass({
 	mixins: [ReactMeteorData,TimerMixin],
 	getMeteorData() {
 		if(Meteor.isClient) {
-			var handle = Meteor.subscribe("eventsGroups");
+			var timeLimitDays = Session.get('timeLimitDays') || 2;
+			
+			//TODO: Support passing parts of aggregator to the subscription
+			var handle = Meteor.subscribe("eventsGroups", timeLimitDays);
 
 			var batches = EventsGroups.find({ 'date.product': this.props.product });
 			//console.log(batches.count());
@@ -26,7 +29,8 @@ SummaryChart = React.createClass({
 				loading: !handle.ready(),
 				user: Meteor.user(),
 				periods: batches.fetch(),
-				currentTime: Session.get('current-time')
+				currentTime: Session.get('current-time'),
+				timeLimitDays: Session.get('timeLimitDays')
 			};
 		} else {
 			return {};
@@ -38,24 +42,23 @@ SummaryChart = React.createClass({
     	currentDate: now
     };
 	},
+	getBaseColumns() {
+		//TODO: Load columns from Product settings
+		return [['x'], ['total'], ['error'], ['warning'], ['info'], ['success'], ['fatal'], ['debug']];
+	},
 	componentWillUpdate(nextProps) {
-		let cols = [['x'], ['total'], ['error'], ['warning'], ['info'], ['success'], ['fatal'], ['debug']];
+		let columns = this.getBaseColumns();
 
 		if(this.data && this.data.periods && this.data.periods.length) {
 			let handledLast = false
 			const periods = this.data.periods.sort((a, b) => a.first > b.first ? 1 : -1);
 
-			cols = periods.reduce(function(cols, p, pos) {
+			columns = periods.reduce(function(cols, p, pos) {
 				const date = p.date && makeDate(p.date);
 
-				cols[0].push(date);
-				cols[1].push(p.count || 0);//TODO: currently not showing total count, p.count || 0);
-				cols[2].push(p.error || 0);
-				cols[3].push(p.warning || 0);
-				cols[4].push(p.info || 0);
-				cols[5].push(p.success || 0);
-				cols[6].push(p.fatal || 0);
-				cols[7].push(p.debug || 0);
+				columns.forEach(function(keyArray, fPos) {
+					cols[fPos].push(fPos ? (p[keyArray[0]] || 0) : date);
+				});
 
 				if((periods[pos+1] && periods[pos+1].date) || !handledLast) {
 					let nextDate = false;
@@ -73,22 +76,24 @@ SummaryChart = React.createClass({
 					
 					for(var i = 0; i < hoursDiff; i++) {
 						let newDate = addHours(date, i+1);
-						cols[0].push(newDate);
+
 						if(!(newDate.getTime() > (new Date().getTime() - 36e5))) {
-							for(var j = 1; j < 8; j++) {
-								cols[j].push(0);
-							}
+							columns.forEach(function(keyArray, fPos) {
+								cols[fPos].push(fPos ? 0 : newDate);
+							});
+						} else {
+							cols[0].push(newDate);
 						}
 					}
 				}
 				return cols;
-			}, cols);
+			}, columns);
 		} else {
-			cols = cols.map((x, p) => x.push( p ? 0 : new Date() ));
+			columns = columns.map((x, p) => x.push(p ? 0 : new Date()) && x);
 		}
 
 		this.chart.load({
-			columns: cols
+			columns: columns
 		});
 
 		//Re-render each minute (no data to show, but will ensure chart always shows to current hour)
@@ -99,9 +104,11 @@ SummaryChart = React.createClass({
 		rerenderTimeout = Meteor.setTimeout(function() { Session.set('current-time', new Date()); }.bind(this), rerenderMs);
 	},
 	dataPointClicked(d, el) {
+			console.log(d);
 		if(d && d.x) {
 			Session.set('viewedStartDate', d.x);
 			Session.set('viewedEndDate', addHours(d.x, 1));
+			Session.set('viewedProduct', this.props.product);
 		}
 	},
 	componentDidMount() {
@@ -112,16 +119,7 @@ SummaryChart = React.createClass({
 				x: 'x',
 				//xFormat: '%Y-%m-%d %H:%M:%S',
 				onclick: this.dataPointClicked,
-				columns: [
-					['x'],
-					['total'],
-					['error'],
-					['warning'],
-					['info'],
-					['success'],
-					['fatal'],
-					['debug'],
-				],
+				columns: this.getBaseColumns(),
         //type: 'area-spline',
         type: 'spline',
 			  colors: {
