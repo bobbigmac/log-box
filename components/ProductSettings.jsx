@@ -17,7 +17,8 @@ ProductSettings = React.createClass({
 	},
 	getInitialState() {
     return {
-      loading: false,  
+      loading: false, 
+      detail: false 
     };
 	},
 	updateSetting(key, val) {
@@ -33,9 +34,11 @@ ProductSettings = React.createClass({
 		this.setState({ 'loading': true });
 
 		Meteor.call('calculate-product-commons', this.props.product, function() {
-			console.log('calculating commons');
 			this.setState({ 'loading': false });
 		}.bind(this));
+	},
+	toggleDetail() {
+		this.setState({ detail: !this.state.detail });
 	},
 	render() {
 		if(!this.data.commons) {
@@ -54,10 +57,16 @@ ProductSettings = React.createClass({
 			<section className="product-settings-container">
 				<div className="row">
 					<div className="col-xs-12">
-						<h4>Product Settings <small>(placeholder)</small></h4>
+						<a className="btn btn-link" onClick={this.toggleDetail}>
+							<h4>
+								<i className={"glyphicon glyphicon-menu-"+(this.state.detail ? 'down' : 'right')}></i>
+								&nbsp;
+								<span>Product Settings</span>
+							</h4>
+						</a>
 					</div>
 				</div>
-				<div className="row">
+				{this.state.detail && <div className="row">
 					<div className="col-xs-12">
 						{!this.state.loading && <button className="btn btn-default pull-right" onClick={this.calculateCommons}>Recalculate Common Fields</button>}
 						<strong>Common Fields: </strong>
@@ -71,7 +80,7 @@ ProductSettings = React.createClass({
 							</div>);
 						}.bind(this))}
 					</div>
-				</div>
+				</div>}
 			</section>
 		);
 	}
