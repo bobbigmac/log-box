@@ -14,7 +14,9 @@ ContentEditable = React.createClass({
     var html = this.htmlEl.innerHTML;
     if (this.props.onChange && html !== this.lastHtml) {
       event.target = { value: html };
-      this.props.onChange(event);
+      if(this.props.onChange(event)) {
+        this.htmlEl.blur();
+      }
     }
 
     this.lastHtml = html;

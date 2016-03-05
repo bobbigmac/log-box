@@ -1,3 +1,9 @@
+Meteor.startup(function () {  
+  Events._ensureIndex({ 'owner': 1, 'product': 1 });
+  Events._ensureIndex({ 'created': 1 });
+  Events._ensureIndex({ 'level': 1 });
+  //Products._ensureIndex({ 'created': 1 });
+});
 
 Meteor.startup(function () {
 	if(typeof AccountsGuest !== 'undefined') {
@@ -75,6 +81,10 @@ Meteor.methods({
 					commons[k] = Object.keys(commons[k]).map(function(x) {
 						return { v: x, c: commons[k][x] };
 					});
+					//TODO: Have a limit of groupable (chart legend entries)
+					if(commons[k].length > 20) {
+						delete commons[k];
+					}
 				}
 
 				Products.update(productId, {
