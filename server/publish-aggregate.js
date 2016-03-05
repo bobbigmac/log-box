@@ -1,11 +1,69 @@
 
-Meteor.publish("eventsGroups", function(timeLimitDays) {
+Meteor.publish("eventsGroups", function(timeLimitDays, model) {
 	timeLimitDays = (typeof timeLimitDays == 'number' && timeLimitDays) || 2;
+	model = model instanceof Object && model || {
+		'level': [
+			['fatal', 1],
+			['error', 1],
+			['warning', 1],
+			['info', 1],
+			['success', 1],//"$processed"
+			['debug', 1],
+		]
+	}
 
 	var result = new Date();
-	//TODO: Accept a timeLimit (or date range) as input
 	var timeLimit = result.setDate(result.getDate() - timeLimitDays);
-	//console.log(timeLimitDays, 'timeLimit', timeLimit, new Date(timeLimit));
+
+	// group fields
+	var group = {
+		'_id': {
+			"product": "$product",
+		  "year": { "$year": "$created" },
+		  "month": { "$month": "$created" },
+		  "day": { "$dayOfMonth": "$created" },
+		  "hour": { "$hour": "$created" }
+		},
+		'created': { "$first": "$created" },
+		'rand_id': { $first: "$_id" },
+		'count': { $sum: 1 }
+	};
+
+	for(var key in model) {
+		if(model[key] instanceof Array) {
+			model[key].forEach(function(pair) {
+				if(!group[pair[0]]) {
+					group[pair[0]] = {
+						$sum: {
+							$cond: { 
+								if: { $eq: ['$'+key, pair[0]] }, 
+								then: (pair[1] || 1), 
+								else: (pair[2] || 0)
+							}
+						}
+					};
+				}
+			});
+		}
+	}
+
+	// project fields
+	var project = {
+		_id: "$rand_id",
+		date: '$_id',
+		first: '$created',
+		count: '$count'
+	};
+
+	for(var key in model) {
+		if(model[key] instanceof Array) {
+			model[key].forEach(function(pair) {
+				if(!project[pair[0]]) {
+					project[pair[0]] = '$'+pair[0];
+				}
+			});
+		}
+	}
 
 	ReactiveAggregate(this, Events, [{
 		$match: {
@@ -15,43 +73,13 @@ Meteor.publish("eventsGroups", function(timeLimitDays) {
 			"owner": this.userId
 		}
 	}, {
-		$group: {
-			'_id': {
-				"product": "$product",
-        "year": { "$year": "$created" },
-        "month": { "$month": "$created" },
-        "day": { "$dayOfMonth": "$created" },
-        "hour": { "$hour": "$created" },
-        //"minute": { "$minute": "$created" }
-      },
-      'created': { "$first": "$created" },
-			'total': { $sum: 1 },
-			'rand_id': { $first: "$_id" },
-			'fatal': { $sum: { $cond: { if: { $eq: ['$level', 'fatal'] }, then: 1, else: 0 }}},
-			'error': { $sum: { $cond: { if: { $eq: ['$level', 'error'] }, then: 1, else: 0 }}},
-			'warning': { $sum: { $cond: { if: { $eq: ['$level', 'warning'] }, then: 1, else: 0 }}},
-			'info': { $sum: { $cond: { if: { $eq: ['$level', 'info'] }, then: 1, else: 0 }}},
-			'success': { $sum: { $cond: { if: { $eq: ['$level', 'success'] }, then: 1, else: 0 }}},
-			'debug': { $sum: { $cond: { if: { $eq: ['$level', 'debug'] }, then: 1, else: 0 }}},
-			//TODO: 'keys': { $sum: 1 },
-		}
+		$group: group
 	}, {
 		$sort: {
 			created: 1
 		}
 	}, {
-		$project: {
-			_id: "$rand_id",
-			date: '$_id',
-			first: '$created',
-			total: '$total',
-			fatal: '$fatal',
-			error: '$error',
-			warning: '$warning',
-			info: '$info',
-			success: '$success',
-			debug: '$debug',
-		}
+		$project: project
 	}], {
 		observeSelector: {
 			"owner": this.userId

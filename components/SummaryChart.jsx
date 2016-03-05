@@ -44,7 +44,7 @@ SummaryChart = React.createClass({
 	},
 	getBaseColumns() {
 		//TODO: Load columns from Product settings
-		return [['x'], ['total'], ['error'], ['warning'], ['info'], ['success'], ['fatal'], ['debug']];
+		return [['x'], ['count'], ['error'], ['warning'], ['info'], ['success'], ['fatal'], ['debug']];
 	},
 	componentWillUpdate(nextProps) {
 		let columns = this.getBaseColumns();
@@ -123,7 +123,7 @@ SummaryChart = React.createClass({
         //type: 'area-spline',
         type: 'spline',
 			  colors: {
-			    total: '#999999',
+			    count: '#999999',
 			    error: '#d9534f',
 			    warning: '#f0ad4e',
 			    info: '#5bc0de',
@@ -133,7 +133,7 @@ SummaryChart = React.createClass({
 			  },
         /*axes: {
           //data1: 'y',
-          total: 'y2'
+          count: 'y2'
         }*/
 			},
 			axis: {

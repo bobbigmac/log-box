@@ -27,7 +27,9 @@ UserSettings = React.createClass({
 		}
 	},
 	setTimeLimitDays(val) {
-		Session.set('timeLimitDays', val);
+		if(typeof val == 'number' && val > 0 && val <= 4) {
+			Session.set('timeLimitDays', val);
+		}
 	},
 	setMasonryCap(val) {
 		if(typeof val == 'number' && val > 0 && val <= 4) {
