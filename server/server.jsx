@@ -71,6 +71,12 @@ Meteor.methods({
 					}, {});
 				}, false);//Start from nothing (first object will provide initial keyset)
 
+				for(var k in commons) {
+					commons[k] = Object.keys(commons[k]).map(function(x) {
+						return { v: x, c: commons[k][x] };
+					});
+				}
+
 				Products.update(productId, {
 					$set: {
 						commons: commons

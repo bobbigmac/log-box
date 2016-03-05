@@ -64,8 +64,8 @@ ProductSettings = React.createClass({
 						{!Object.keys(this.data.commons).length && 'No common fields for all events'}
 						{Object.keys(this.data.commons).map(function(c) {
 							return (<div key={c}><strong>{c}</strong>: {
-								Object.keys(this.data.commons[c]).map(function(x) {
-									return (<span className="common-field-value" key={x}>{x}: {this.data.commons[c][x]}</span>)
+								this.data.commons[c].map(function(x) {
+									return (<span className="common-field-value" key={x.v}>{x.v}: {x.c}</span>)
 								}.bind(this))
 							}
 							</div>);
