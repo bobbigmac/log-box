@@ -6,27 +6,23 @@ Realtime listener/display for remote logging events.
 
 http://logjar.com
 
-`http://logjar.com/add/?owner=YOUR_API_KEY&level=info&title=My%20awesome%20message%20on%20logbox`
+`http://logjar.com/add/?owner=YOUR_API_KEY&level=info&message=My%20awesome%20message%20on%20logbox`
 
 ## Usage
 
 * Run `meteor`.
 * Visit in a browser, register a user apikey (for the default product).
-* POST any set of parameters to `/add/` along with `{ owner: apikey, level: 'info', title: "my awesome event" }`.
+* POST any set of parameters to `/add/` along with `{ owner: apikey, level: 'info', message: "my awesome event" }`.
 
 Implemented levels are `['debug', 'info', 'success', 'warning', 'error', 'fatal']`
 
-Click an Event heading to inspect the full event data. Click a data-point in a chart to limit the Events list to that hour (Refresh the page to reset to viewing last 50).
+Click an Event heading to inspect the full event data. Click a data-point in a chart to limit the Events list to that product for that hour.
 
 ## Non-ui features
 
 Some features don't have UI components to set:
 
 ```javascript
-//Rename a product
-Products.update(Products.findOne({ name: 'Current Name' })._id, { $set: { name: 'New Name' }});
-//Delete a product
-Products.remove(Products.findOne({ name: 'Current Name' })._id);
 //Filter events list (both must be dates)
 Session.set('viewedStartDate', new Date(new Date().getTime()-(1000*60*60*1 /*an hour*/)));
 Session.set('viewedEndDate', new Date());

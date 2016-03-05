@@ -33,7 +33,8 @@ SummaryChart = React.createClass({
 				user: Meteor.user(),
 				periods: batches.fetch(),
 				currentTime: Session.get('current-time'),
-				timeLimitDays: Session.get('timeLimitDays')
+				timeLimitDays: Session.get('timeLimitDays'),
+				model: model
 			};
 		} else {
 			return {};
@@ -46,11 +47,21 @@ SummaryChart = React.createClass({
     };
 	},
 	getBaseColumns() {
-		//TODO: Load columns from Product settings
-		return [['x'], ['count'], ['error'], ['warning'], ['info'], ['success'], ['fatal'], ['debug']];
+		// Load columns from Product settings
+		var defaultColumns = [['error'], ['warning'], ['info'], ['success'], ['fatal'], ['debug']];
+		if(this.data.model) {
+			const model = this.data.model;
+
+			defaultColumns = Object.keys(model).reduce(function(cols, field) {
+				model[field].forEach(pair => cols.push([pair[0]]));
+				return cols;
+			}, []);
+		}
+		return [['x'], ['count']].concat(defaultColumns);
 	},
 	componentWillUpdate(nextProps) {
 		let columns = this.getBaseColumns();
+		//console.log(columns);
 
 		if(this.data && this.data.periods && this.data.periods.length) {
 			let handledLast = false
