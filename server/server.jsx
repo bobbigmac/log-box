@@ -50,6 +50,53 @@ Meteor.methods({
 			});
 		}
 	},
+	'delete-events': function(productApiKey, selector) {
+		if(this.userId && productApiKey && selector && selector instanceof Object) {
+
+			var product = Products.findOne({
+				apikey: productApiKey,
+				owner: this.userId
+			}, { fields: { _id: 1 }});
+
+			if(product) {
+				selector.owner = this.userId;
+				selector.product = product._id;
+
+				Events.remove(selector);
+			}
+		}
+	},
+	'move-events': function(productApiKey, selector, toProductApiKey) {
+		//console.log(this.userId, productApiKey, selector, toProductApiKey, selector instanceof Object);
+		if(this.userId && productApiKey && toProductApiKey && selector && selector instanceof Object) {
+
+			var product = Products.findOne({
+				apikey: productApiKey,
+				owner: this.userId
+			}, { fields: { _id: 1 }});
+
+			//console.log('product', product);
+			if(product) {
+
+				selector.owner = this.userId;
+				selector.product = product._id;
+
+				var toProduct = Products.findOne({
+					apikey: toProductApiKey,
+					owner: this.userId
+				});
+
+				//console.log('toProduct', toProduct, selector);
+				if(toProduct) {
+					Events.update(selector, {
+						$set: {
+							product: toProduct._id
+						}
+					}, { multi: true });
+				}
+			}
+		}
+	},
 	'calculate-product-commons': function(productId) {
 		if(productId && this.userId) {
 

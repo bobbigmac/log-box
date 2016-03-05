@@ -39,21 +39,23 @@ SummaryChart = React.createClass({
     };
 	},
 	componentWillUpdate(nextProps) {
-		if(this.data && this.data.periods) {
+		let cols = [['x'], ['total'], ['error'], ['warning'], ['info'], ['success'], ['fatal'], ['debug']];
+
+		if(this.data && this.data.periods && this.data.periods.length) {
 			let handledLast = false
 			const periods = this.data.periods.sort((a, b) => a.first > b.first ? 1 : -1);
 
-			const both = periods.reduce(function(both, p, pos) {
+			cols = periods.reduce(function(cols, p, pos) {
 				const date = p.date && makeDate(p.date);
 
-				both[0].push(date);
-				both[1].push(p.count || 0);//TODO: currently not showing total count, p.count || 0);
-				both[2].push(p.error || 0);
-				both[3].push(p.warning || 0);
-				both[4].push(p.info || 0);
-				both[5].push(p.success || 0);
-				both[6].push(p.fatal || 0);
-				both[7].push(p.debug || 0);
+				cols[0].push(date);
+				cols[1].push(p.count || 0);//TODO: currently not showing total count, p.count || 0);
+				cols[2].push(p.error || 0);
+				cols[3].push(p.warning || 0);
+				cols[4].push(p.info || 0);
+				cols[5].push(p.success || 0);
+				cols[6].push(p.fatal || 0);
+				cols[7].push(p.debug || 0);
 
 				if((periods[pos+1] && periods[pos+1].date) || !handledLast) {
 					let nextDate = false;
@@ -71,21 +73,23 @@ SummaryChart = React.createClass({
 					
 					for(var i = 0; i < hoursDiff; i++) {
 						let newDate = addHours(date, i+1);
-						both[0].push(newDate);
+						cols[0].push(newDate);
 						if(!(newDate.getTime() > (new Date().getTime() - 36e5))) {
 							for(var j = 1; j < 8; j++) {
-								both[j].push(0);
+								cols[j].push(0);
 							}
 						}
 					}
 				}
-				return both;
-			}, [['x'], ['total'], ['error'], ['warning'], ['info'], ['success'], ['fatal'], ['debug']]);
-
-			this.chart.load({
-				columns: both
-			});
+				return cols;
+			}, cols);
+		} else {
+			cols = cols.map((x, p) => x.push( p ? 0 : new Date() ));
 		}
+
+		this.chart.load({
+			columns: cols
+		});
 
 		//Re-render each minute (no data to show, but will ensure chart always shows to current hour)
 		const rerenderMs = 1000 * 60;
