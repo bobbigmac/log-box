@@ -1,7 +1,7 @@
 
-Meteor.publish("eventsGroups", function(timeLimitDays, model) {
+Meteor.publish("eventsGroups", function(productId, timeLimitDays, model) {
 	timeLimitDays = (typeof timeLimitDays == 'number' && timeLimitDays) || 2;
-	model = model instanceof Object && model || {
+	model = (model instanceof Object && model) || {
 		'level': [
 			['fatal', 1],
 			['error', 1],
@@ -12,6 +12,7 @@ Meteor.publish("eventsGroups", function(timeLimitDays, model) {
 		]
 	}
 
+	//console.log(productId, model);
 	var result = new Date();
 	var timeLimit = result.setDate(result.getDate() - timeLimitDays);
 
@@ -52,6 +53,7 @@ Meteor.publish("eventsGroups", function(timeLimitDays, model) {
 		_id: "$rand_id",
 		date: '$_id',
 		first: '$created',
+		product: '$_id.product',
 		count: '$count'
 	};
 
@@ -67,10 +69,10 @@ Meteor.publish("eventsGroups", function(timeLimitDays, model) {
 
 	ReactiveAggregate(this, Events, [{
 		$match: {
+			"owner": this.userId,
+			"product": productId,
 			"created": { $type: 9 },
 			"created": { $gte: new Date(timeLimit) },
-			"product": { $exists: true },
-			"owner": this.userId
 		}
 	}, {
 		$group: group
@@ -82,7 +84,8 @@ Meteor.publish("eventsGroups", function(timeLimitDays, model) {
 		$project: project
 	}], {
 		observeSelector: {
-			"owner": this.userId
+			"owner": this.userId,
+			"product": productId,
 		},
 		// Send the aggregation to the 'clientReport' collection available for client use
 		clientCollection: "events-groups"

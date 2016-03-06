@@ -114,7 +114,7 @@ Meteor.methods({
 						// Consolidate to object with counts of each non-object value
 						if((!c || (c[k] != undefined && e[k] != undefined))) {
 							// Value must be a string or number to group on
-							if(typeof e[k] === 'string' || typeof e[k] === 'number') {
+							if((typeof e[k] === 'string' && e[k].lastIndexOf('.') === -1 && e[k].lastIndexOf('$') === -1) || typeof e[k] === 'number') {
 								comps[k] = comps[k] || (c && c[k]) || {};
 								comps[k][e[k]] = comps[k][e[k]] || 0;
 								comps[k][e[k]]++;

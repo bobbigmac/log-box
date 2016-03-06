@@ -14,7 +14,7 @@ http://logjar.com
 * Visit in a browser, register a user apikey (for the default product).
 * POST any set of parameters to `/add/` along with `{ owner: apikey, level: 'info', message: "my awesome event" }`.
 
-Implemented levels are `['debug', 'info', 'success', 'warning', 'error', 'fatal']`
+Default levels are `['debug', 'info', 'success', 'warning', 'error', 'fatal']`
 
 Click an Event heading to inspect the full event data. Click a data-point in a chart to limit the Events list to that product for that hour.
 

@@ -55,6 +55,7 @@ WebApp.connectHandlers.use('/add',
 						event.owner = product.owner;
 
 						// Add new event for user
+						//console.log('adding event with keys', Object.keys(event), event.product, event.owner);
 						content = Events.insert(event);
 						code = 200;
 					} else {
@@ -76,6 +77,7 @@ WebApp.connectHandlers.use('/add',
 		res.statusCode = ""+code;
 	}
 
+  res.setHeader("Access-Control-Allow-Origin", "*");
 	if(content) {
 		var type = 'text/plain';
 		if(typeof content !== 'string') {

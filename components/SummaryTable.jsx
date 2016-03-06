@@ -1,6 +1,9 @@
 SummaryTable = React.createClass({
 	mixins: [ReactMeteorData],
 	getMeteorData() {
+
+		//DO NOT USE, OUT OF DATE
+		
 		if(Meteor.isClient) {
 			var handle = Meteor.subscribe("eventsGroups");
 

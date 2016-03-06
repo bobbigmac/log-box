@@ -24,16 +24,15 @@ SummaryChart = React.createClass({
 			var model = product && product.settings && product.settings.model;
 			//console.log('subbing with model', model);
 
-			var handle = Meteor.subscribe("eventsGroups", timeLimitDays);
-
-			var batches = EventsGroups.find({ 'date.product': this.props.product });
+			var handle = Meteor.subscribe("eventsGroups", product._id, timeLimitDays, model);
+			var batches = EventsGroups.find({ 'product': this.props.product });
 			//console.log(batches.count());
 			return {
 				loading: !handle.ready(),
 				user: Meteor.user(),
 				periods: batches.fetch(),
 				currentTime: Session.get('current-time'),
-				timeLimitDays: Session.get('timeLimitDays'),
+				timeLimitDays: Session.get('timeLimitDays') || 2,
 				model: model
 			};
 		} else {
@@ -59,7 +58,15 @@ SummaryChart = React.createClass({
 		}
 		return [['x'], ['count']].concat(defaultColumns);
 	},
+	componentWillReceiveProps(nextProps) {
+  	//console.log('will get new props', nextProps, this.data);
+  	if(this.data.model && !_.isEqual(this.data.model, this.lastModel)) {
+  		console.log('model changed');
+  		this.setupChart();
+  	}
+	},
 	componentWillUpdate(nextProps) {
+		//console.log('will update', nextProps);
 		let columns = this.getBaseColumns();
 		//console.log(columns);
 
@@ -118,14 +125,19 @@ SummaryChart = React.createClass({
 		rerenderTimeout = Meteor.setTimeout(function() { Session.set('current-time', new Date()); }.bind(this), rerenderMs);
 	},
 	dataPointClicked(d, el) {
-			console.log(d);
+		//console.log(d);
 		if(d && d.x) {
 			Session.set('viewedStartDate', d.x);
 			Session.set('viewedEndDate', addHours(d.x, 1));
 			Session.set('viewedProduct', this.props.product);
 		}
 	},
-	componentDidMount() {
+	setupChart() {
+		if(this.chart) {
+			this.chart.destroy();
+		}
+		this.lastModel = this.data.model;
+
 		// See http://c3js.org/reference.html
 		this.chart = c3.generate({
 			bindto: this.refs['chart-container'],
@@ -135,8 +147,9 @@ SummaryChart = React.createClass({
 				onclick: this.dataPointClicked,
 				columns: this.getBaseColumns(),
         //type: 'area-spline',
-        type: 'spline',
-			  colors: {
+        //type: 'spline',
+        type: 'line',
+			  /*colors: {
 			    count: '#999999',
 			    error: '#d9534f',
 			    warning: '#f0ad4e',
@@ -144,11 +157,7 @@ SummaryChart = React.createClass({
 			    success: '#5cb85c',
 			    fatal: '#ff0000',
 			    debug: '#cccccc',
-			  },
-        /*axes: {
-          //data1: 'y',
-          count: 'y2'
-        }*/
+			  },*/
 			},
 			axis: {
 				x: {
@@ -167,16 +176,13 @@ SummaryChart = React.createClass({
 						bottom: 0
 					}
 				},
-				/*y2: {
-					tick: {
-						min: 0
-					},
-					padding: {
-						bottom: 0
-					}
-				}*/
 			}
 		});
+	},
+	componentDidMount() {
+		if(!this.chart) {
+			this.setupChart();
+		}
 
     this.setInterval(function() {
 			var now = new Date();
@@ -184,7 +190,6 @@ SummaryChart = React.createClass({
     }.bind(this), 60*1000);
 	},
 	render() {
-		//const currentDay = (new Date()).getDay();
 		return (
 			<section>
 				<div ref="chart-container">
