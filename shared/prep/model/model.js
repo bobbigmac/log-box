@@ -3,6 +3,9 @@ BrandName = 'Log Jar';
 Products = new Mongo.Collection('products');
 Events = new Mongo.Collection('events');
 
+//Used to consolidate Events keys
+ProductKeys = new Mongo.Collection('ProductKeys');
+
 if(Meteor.isServer) {
 	if(typeof Session == 'undefined') {
 		Session = {
