@@ -104,7 +104,7 @@ Meteor.methods({
 			const events = Events.find({
 				owner: this.userId,
 				product: productId
-			}, { limit: 1000, sort: { created: -1 }, fields: { _id: false, created: false, owner: false, product: false }}).fetch();
+			}, { limit: 5000, sort: { created: -1 }, fields: { _id: false, created: false, owner: false, product: false }}).fetch();
 
 			if(events && events.length) {
 				// Get object of keys common to all events
