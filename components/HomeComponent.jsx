@@ -5,6 +5,7 @@ HomeComponent = React.createClass({
     const StartDate = Session.get('viewedStartDate');
     const EndDate = Session.get('viewedEndDate');
     const viewProductId = Session.get('viewedProduct');
+    const viewValues = Session.get('viewedValues');
 
     Meteor.subscribe("products");
 
@@ -17,9 +18,16 @@ HomeComponent = React.createClass({
     } else {
     	sub.filter.level = { $in: ['fatal', 'error', 'warning'] };
     }
+
     if(viewProductId) {
       sub.filter.product = viewProductId;
+      if(viewValues && viewValues instanceof Array && viewValues.length) {
+        sub.filter.level = { $in: viewValues };
+      }
     }
+
+    //console.log(sub.filter);
+
     var handle = Meteor.subscribe("events", sub);
 
     var user = Meteor.user();
@@ -38,7 +46,8 @@ HomeComponent = React.createClass({
       products: Products.find().fetch(),
       eventCount: (Meteor.isClient ? EventsGroups.find().fetch().reduce((prev, eg) => prev+eg.count, 0) : false),
       capSize: capSize,
-      viewedProduct: viewedProduct
+      viewedProduct: viewedProduct,
+      viewedValues: viewValues
     };
   },
   addProduct() {
@@ -76,6 +85,7 @@ HomeComponent = React.createClass({
 							<h3 className="title">
 								<button className="btn btn-default pull-right" onClick={this.addProduct}>Add Product</button>
 								{(this.data.events && this.data.events.length||0)+"/"+(this.data && this.data.eventCount||0)+' Events'+(this.data.viewedProduct ? ' on ' + this.data.viewedProduct.name : '')}
+                {this.data.viewedValues && (this.data.viewedValues.length || '') && <span>: {this.data.viewedValues.join(', ')}</span>}
 							</h3>
 
 							{this.data.events.map(function(item, i) {

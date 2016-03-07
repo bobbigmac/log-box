@@ -132,6 +132,29 @@ SummaryChart = React.createClass({
 			Session.set('viewedProduct', this.props.product);
 		}
 	},
+	legendClicked(d, el) {
+		if(d != 'count') {
+			let viewedValues = Session.get('viewedValues') || [];
+			let viewedProduct = Session.get('viewedProduct');
+			if(viewedProduct != this.props.product) {
+				Session.set('viewedProduct', this.props.product);
+				viewedValues = [];
+			}
+
+			if(viewedValues && viewedValues instanceof Array) {
+				const index = viewedValues.indexOf(d);
+				if(index > -1) {
+					viewedValues.splice(index, 1);
+				} else {
+					viewedValues.push(d);
+				}
+
+				Session.set('viewedProduct', this.props.product);	
+				Session.set('viewedValues', viewedValues);
+				//console.log('viewedValues', viewedValues);
+			}
+		}
+	},
 	setupChart() {
 		if(this.chart) {
 			this.chart.destroy();
@@ -176,6 +199,11 @@ SummaryChart = React.createClass({
 						bottom: 0
 					}
 				},
+			},
+			legend: {
+				item: {
+					onclick: this.legendClicked
+				}
 			}
 		});
 	},

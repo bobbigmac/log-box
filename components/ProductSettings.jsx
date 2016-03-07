@@ -77,7 +77,7 @@ ProductSettings = React.createClass({
 				{this.state.detail && <div className="row">
 					<div className="col-xs-12">
 						{!this.state.loading && <button className="btn btn-default pull-right" onClick={this.calculateCommons}>Recalculate Common Fields</button>}
-						<strong>Group By:</strong>
+						<strong>Group By: </strong>
 						{!Object.keys(this.data.commons).length && 'No common fields for all events'}
 
 						{Object.keys(this.data.commons).filter(c => (this.data.commons[c].length)).map(function(c) {

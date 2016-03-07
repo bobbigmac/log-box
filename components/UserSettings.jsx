@@ -13,7 +13,9 @@ UserSettings = React.createClass({
       masonryCap: profile.masonryCap || Session.get('masonryCap'),
       timeLimitDays: (Session.get('timeLimitDays') || 2),
       startDate: StartDate,
-      endDate: EndDate
+      endDate: EndDate,
+      viewedProduct: Session.get('viewedProduct'),
+      viewedValues: Session.get('viewedValues'),
     };
 	},
 	setUserProfile(key, val) {
@@ -41,6 +43,7 @@ UserSettings = React.createClass({
 		Session.set('viewedStartDate', false);
 		Session.set('viewedEndDate', false);
 		Session.set('viewedProduct', false);
+		Session.set('viewedValues', []);
 	},
 	render() {
 		if(!this.data.user) {
@@ -72,7 +75,7 @@ UserSettings = React.createClass({
 							</a>
 						</div>
 
-						{this.data.startDate && <div className="btn-group" role="group">
+						{(this.data.startDate || this.data.viewedProduct) && <div className="btn-group" role="group">
 							<button className="btn btn-warning" onClick={this.clearDateFilter}>Clear Event Filter</button>
 						</div>}
 
