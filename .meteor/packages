@@ -40,5 +40,4 @@ cosmos:browserify
 
 
 npm-container
-bobbigmac:css-masonry
 codeempathy:react-timer-mixin

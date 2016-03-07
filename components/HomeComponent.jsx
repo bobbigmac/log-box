@@ -65,15 +65,13 @@ HomeComponent = React.createClass({
 			<section>
 
 				<div className="row">
-					<div className="col-xs-12">
-						<div className={"masonry-wall masonry-cap-"+capSize}>
-							{this.data.products.map(function(product) {
-								return (
-									<Product product={product} key={product._id} />
-								)
-							}.bind(this))}
-						</div>
-					</div>
+					{this.data.products.map(function(product) {
+						return (
+              <div className={"col-xs-"+(12 / capSize)} key={product._id}>
+							  <Product product={product} />
+              </div>
+						)
+					}.bind(this))}
 				</div>
         
         <UserSettings />

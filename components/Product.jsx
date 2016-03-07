@@ -25,7 +25,7 @@ Product = React.createClass({
 		const product = this.props.product || {};
 
 		return (
-			<section className="masonry-brick product-group">
+			<section className="product-group">
 				<div className="alert alert-info" role="alert">
 					<button className="btn btn-default pull-right hidden" onClick={this.addTestRecord.bind(this, product._id)}>Add Test Record</button>
 					<div className="pull-right">Owner: {product.apikey}</div>
