@@ -16,7 +16,9 @@ http://logjar.com
 
 Default levels are `['debug', 'info', 'success', 'warning', 'error', 'fatal']`
 
-Click an Event heading to inspect the full event data. Click a data-point in a chart to limit the Events list to that product for that hour.
+Click an Event heading to inspect the full event data. Click a data-point in a chart to limit the Events list to that product for that hour. Click a legend entry to limit the Events list to events of that level.
+
+Recently addded support for aggregating by fields other than level, though filtering is not yet functional for those fields.
 
 ## Non-ui features
 
@@ -27,10 +29,6 @@ Some features don't have UI components to set:
 Session.set('viewedStartDate', new Date(new Date().getTime()-(1000*60*60*1 /*an hour*/)));
 Session.set('viewedEndDate', new Date());
 ```
-
-## Todo
-
-* Probably wants CORS on the /add/ endpoint.
 
 ## Contributing
 
