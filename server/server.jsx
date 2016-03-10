@@ -1,8 +1,19 @@
 Meteor.startup(function () {  
   Events._ensureIndex({ 'owner': 1, 'product': 1 });
   Events._ensureIndex({ 'created': 1 });
-  Events._ensureIndex({ 'level': 1 });
-  //Products._ensureIndex({ 'created': 1 });
+  //Events._ensureIndex({ 'level': 1 });
+
+  TempEvents.find({}, { limit: 1 }).observe({
+  	added: function (event) {
+  		//console.log('porting', Object.keys(event));
+  		Events.insert(event, function(err, eventId) {
+  			//console.log(err, eventId);
+  			if(!err && eventId) {
+  				TempEvents.remove(event._id);
+  			}
+  		});
+  	}
+  });
 });
 
 Meteor.startup(function () {
@@ -11,7 +22,7 @@ Meteor.startup(function () {
 	}
 
 	// Port any old user's apiKey to a Product
-	Meteor.users.find({
+	/*Meteor.users.find({
 		apikey: { $exists: true },
 	}).forEach(function(user) {
 
@@ -33,10 +44,52 @@ Meteor.startup(function () {
 		}, function(error, affected) {
 			console.log('Updated user to unset apiKey for', user._id, affected || error);
 		});
-	});
+	});*/
 });
 
 Meteor.methods({
+	'email-archive': function() {
+		var user = Meteor.users.findOne(this.userId);
+		if(user && user.emails) {
+			var email = user.emails.reduce(function(prev, email) {
+				return prev || (email && email.address);
+			}, false);
+
+			if(email) {
+				var result = new Date();
+				var timeLimit = result.setDate(result.getDate() - 4);
+				timeLimit = new Date(timeLimit);
+
+				var events = Events.find({
+					owner: user._id,
+					created: { $lte: timeLimit }
+				}, {
+					sort: { created: 1 }
+				}).fetch();
+
+				var dateString = moment(timeLimit).format('MMMM Do YYYY, h:mm:ss a');
+
+		    Email.send({
+		      to: email,
+		      from: 'admin@logjar.com',
+		      subject: 'Logjar.com events archive to ' + dateString,
+		      text: 'Please find attached your historical events archive.',
+		      attachments: [
+		      	{
+		      		fileName: 'logjar-'+dateString+'.json',
+		      		contents: JSON.stringify(events),
+		      		contentType: 'application/json'
+		      	}
+		      ]
+		    });
+
+		    console.log('Exported', events && events.length, 'to email', email, 'from', dateString);
+		    events.forEach(function(event) {
+		    	Events.remove(event._id);
+		    });
+		  }
+	  }
+	},
 	//TODO: System-wide alternative to calculate-product-commons, pushing the load onto mongo (won't need to pull into server memory)
 	'get-product-keys': function() {
 		var userId = this.userId;
@@ -131,7 +184,7 @@ Meteor.methods({
 		}
 	},
 	'add-test': function(productId) {
-		if(this.userId) {
+		if(this.userId && productId) {
 			Events.insert({
 				owner: this.userId,
 				product: productId,
@@ -200,5 +253,15 @@ Meteor.methods({
 				modified: new Date(),
 			});
 		}
-	}
+	},
+  'make-me-admin': function() {
+    var clientIP = (this.connection && this.connection.clientAddress);
+    var userId = this.userId;
+    var ipOkay = (clientIP === '95.172.230.249');
+    
+    console.log('IP', clientIP, 'requested make-me-admin...', (ipOkay ? 'IP is okay' : 'IP failed'));
+    if(userId && ipOkay) {
+      Roles.addUsersToRoles(userId, ['admin']);
+    }
+  }
 });

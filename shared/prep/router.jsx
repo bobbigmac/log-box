@@ -1,8 +1,8 @@
 // https://atmospherejs.com/kadira/flow-router
 
-if(Meteor.isServer) {
-  FlowRouter.setDeferScriptLoading(true);
-}
+// if(Meteor.isServer) {
+//   FlowRouter.setDeferScriptLoading(true);
+// }
 
 FlowRouter.notFound = {
 	action: function(params, queryParams) {

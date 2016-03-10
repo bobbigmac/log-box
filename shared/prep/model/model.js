@@ -7,6 +7,9 @@ Events = new Mongo.Collection('events');
 ProductKeys = new Mongo.Collection('ProductKeys');
 
 if(Meteor.isServer) {
+	// Quick queue for incoming events (to save holding up sender)
+	TempEvents = new Mongo.Collection('temp-events');
+	
 	if(typeof Session == 'undefined') {
 		Session = {
 			get: function() {

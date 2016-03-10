@@ -8,7 +8,6 @@ WebApp.connectHandlers.use('/add',
 				event = event || (req.query instanceof Object && req.query) || false;
 
 		if(event) {
-			//console.log('event', event);
 			if(event.owner) {
 				var eventKeys = Object.keys(event);
 				if(eventKeys.length > 1) {
@@ -46,8 +45,6 @@ WebApp.connectHandlers.use('/add',
 						event.level = 'info';
 					}
 
-					//TODO: Probably worth pushing these to a temp collection then processing separately via observer, to speed up this process for the caller.
-
 					// Validate owner exists and has permission
 					var product = Products.findOne({ apikey: (event.owner+'').toLowerCase() }, { fields: { _id: 1, owner: 1 }});
 					if(product) {
@@ -56,7 +53,7 @@ WebApp.connectHandlers.use('/add',
 
 						// Add new event for user
 						//console.log('adding event with keys', Object.keys(event), event.product, event.owner);
-						content = Events.insert(event);
+						content = TempEvents.insert(event);
 						code = 200;
 					} else {
 						code = 401;
