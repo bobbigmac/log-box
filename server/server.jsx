@@ -3,13 +3,15 @@ Meteor.startup(function () {
   Events._ensureIndex({ 'created': 1 });
   //Events._ensureIndex({ 'level': 1 });
 
-  TempEvents.find({}, { limit: 1 }).observe({
+  TempEvents.find({}, { limit: 10 }).observe({
   	added: function (event) {
   		//console.log('porting', Object.keys(event));
   		Events.insert(event, function(err, eventId) {
   			//console.log(err, eventId);
   			if(!err && eventId) {
   				TempEvents.remove(event._id);
+  			} else {
+  				console.log('Error porting TempEvent', err);
   			}
   		});
   	}
@@ -48,6 +50,9 @@ Meteor.startup(function () {
 });
 
 Meteor.methods({
+	'log-temp-events': function() {
+		console.log('TempEvents', TempEvents.find({}).fetch());
+	},
 	'email-archive': function() {
 		var user = Meteor.users.findOne(this.userId);
 		if(user && user.emails) {
