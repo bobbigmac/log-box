@@ -11,6 +11,7 @@ Meteor.startup(function () {
   			if(!err && eventId) {
   				TempEvents.remove(event._id);
   			} else {
+  				//TODO: Need to do something about these. Probably flag as 'could not add' and wrap observer to ignore them.
   				console.log('Error porting TempEvent', err);
   			}
   		});
