@@ -11,7 +11,10 @@ Meteor.startup(function () {
   			if(!err && eventId) {
   				TempEvents.remove(event._id);
   			} else {
-  				//TODO: Need to do something about these. Probably flag as 'could not add' and wrap observer to ignore them.
+  				if(err.code == 11000) {
+  					TempEvents.remove(event._id);
+  				}
+  				//TODO: Need to do something about unknown errors. Probably flag as 'could not add' and wrap observer to ignore them.
   				console.log('Error porting TempEvent', err);
   			}
   		});
