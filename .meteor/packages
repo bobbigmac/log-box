@@ -11,7 +11,6 @@ momentjs:moment
 accounts-password
 ongoworks:security
 alanning:roles
-standard-minifiers
 meteor-base
 mobile-experience
 mongo
@@ -25,7 +24,6 @@ random
 ejson
 spacebars
 check
-react
 kadira:react-layout
 bobbigmac:react-simpleform
 jcbernack:reactive-aggregate
@@ -34,12 +32,14 @@ peernohell:c3
 juliancwirko:s-alert
 juliancwirko:s-alert-flip
 pbastowski:body-parser
-meteorhacks:npm
 cosmos:browserify
 
 
-npm-container
 codeempathy:react-timer-mixin
 email
 meteorhacks:kadira
 kadira:flow-router
+standard-minifier-css
+standard-minifier-js
+ecmascript
+react-meteor-data@0.2.4

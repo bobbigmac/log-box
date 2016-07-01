@@ -1,3 +1,5 @@
+var React = require('react');
+
 Table = React.createClass({
 	render() {
 		return (

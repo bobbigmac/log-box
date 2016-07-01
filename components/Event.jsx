@@ -1,3 +1,6 @@
+var React = require('react');
+var JsonInspector = require('react-json-inspector');
+
 Event = React.createClass({
   mixins: [TimerMixin],
 	getInitialState() {

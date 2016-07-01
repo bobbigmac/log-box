@@ -1,3 +1,5 @@
+var React = require('react');
+
 HomeComponent = React.createClass({
   mixins: [ReactMeteorData],
   getMeteorData() {
@@ -63,8 +65,7 @@ HomeComponent = React.createClass({
 
 		return (
 			<section>
-
-				<div className="row">
+        <div className="row">
 					{this.data.products.map(function(product) {
 						return (
               <div className={"col-xs-"+(12 / capSize)} key={product._id}>
@@ -73,8 +74,6 @@ HomeComponent = React.createClass({
 						)
 					}.bind(this))}
 				</div>
-        
-        <UserSettings />
 
 				<div className="container">
 					<div className="row">

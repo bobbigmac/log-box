@@ -1,3 +1,5 @@
+var React = require('react');
+
 ProductSettings = React.createClass({
   mixins: [ReactMeteorData],
 	getMeteorData() {

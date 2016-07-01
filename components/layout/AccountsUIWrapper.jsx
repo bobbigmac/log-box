@@ -1,3 +1,6 @@
+var React = require('react');
+var ReactDOM = require('react-dom');
+
 AccountsUIWrapper = React.createClass({
   componentDidMount() {
     this.view = Blaze.render(Template._loginButtons,

@@ -1,0 +1,30 @@
+{
+  "name": "log-box",
+  "version": "1.0.0",
+  "description": "Log event storage",
+  "dependencies": {
+    "react": "^15.1.0",
+    "react-addons-create-fragment": "^15.1.0",
+    "react-addons-css-transition-group": "^15.1.0",
+    "react-addons-linked-state-mixin": "^15.1.0",
+    "react-addons-perf": "^15.1.0",
+    "react-addons-pure-render-mixin": "^15.1.0",
+    "react-addons-test-utils": "^15.1.0",
+    "react-addons-transition-group": "^15.1.0",
+    "react-addons-update": "^15.1.0",
+    "react-dom": "^15.1.0",
+    "react-json-inspector": "^7.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://bobbigmac@github.com/bobbigmac/log-box.git"
+  },
+  "author": "Bob Davies",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "bugs": {
+    "url": "https://github.com/bobbigmac/log-box/issues"
+  },
+  "homepage": "https://github.com/bobbigmac/log-box#readme"
+}

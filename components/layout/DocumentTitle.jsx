@@ -1,3 +1,5 @@
+var React = require('react');
+
 function setDocumentTitle(title) {
   if(typeof document !== 'undefined') {
     document.title = title;

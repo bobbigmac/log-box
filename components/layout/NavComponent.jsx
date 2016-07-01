@@ -1,3 +1,5 @@
+var React = require('react');
+
 NavComponent = React.createClass({
   mixins: [ReactMeteorData],
   getMeteorData() {

@@ -1,3 +1,5 @@
+var React = require('react');
+
 Product = React.createClass({
 	getInitialState() {
 	    return {
@@ -31,8 +33,6 @@ Product = React.createClass({
 					<div className="pull-right">Owner: {product.apikey}</div>
 					<ContentEditable className="bold-text" onChange={this.setProductName} html={product.name} />
 				</div>
-
-				{Meteor.isClient && <SummaryChart product={product._id} />}
 
 				<ProductSettings product={product._id} />
 			</section>

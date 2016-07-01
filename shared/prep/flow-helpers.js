@@ -1,13 +1,13 @@
-let pathFor = ( path, params ) => {
-  let query = params && params.query ? FlowRouter._qs.parse( params.query ) : {};
+var pathFor = function( path, params ) {
+  var query = params && params.query ? FlowRouter._qs.parse( params.query ) : {};
   return FlowRouter.path( path, params, query );
 };
 
-let urlFor = ( path, params ) => {
+var urlFor = function( path, params ) {
   return Meteor.absoluteUrl( pathFor( path, params ) );
 };
 
-let currentRoute = ( route ) => {
+var currentRoute = function( route ) {
   FlowRouter.watchPathChange();
   return FlowRouter.current().route.name === route ? 'active' : '';
 };

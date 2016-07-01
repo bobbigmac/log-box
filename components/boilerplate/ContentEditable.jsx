@@ -1,3 +1,5 @@
+var React = require('react');
+
 ContentEditable = React.createClass({
   shouldComponentUpdate(nextProps) {
     return !this.htmlEl || nextProps.html !== this.htmlEl.innerHTML ||

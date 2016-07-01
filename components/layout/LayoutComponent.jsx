@@ -1,3 +1,5 @@
+var React = require('react');
+
 LayoutComponent = React.createClass({
 	brand: BrandName,
   render() {

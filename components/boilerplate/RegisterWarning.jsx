@@ -1,3 +1,5 @@
+var React = require('react');
+
 RegisterWarning = React.createClass({
 	render() {
 		if(!Meteor.userId() && this.props.show) {

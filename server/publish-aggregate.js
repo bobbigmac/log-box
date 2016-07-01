@@ -1,5 +1,9 @@
 
 Meteor.publish("eventsGroups", function(productId, timeLimitDays, model) {
+	//TODO: Have disabled to save memory, want to figure out what to do with this, aggregate subs are resource heavy
+	this.ready();
+	return;
+
 	timeLimitDays = (typeof timeLimitDays == 'number' && timeLimitDays) || 2;
 	model = (model instanceof Object && model) || {
 		'level': [
